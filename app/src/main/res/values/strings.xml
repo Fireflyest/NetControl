@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">NetControl</string>
-
     <string name="app_empty"> </string>
     <string name="app_add">添加</string>
+
+    <string name="menu_device">设备</string>
+    <string name="menu_setting">设置</string>
+    <string name="menu_batch">批量</string>
+    <string name="menu_all">全选</string>
+    <string name="menu_invert">反选</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -23,6 +28,7 @@
     <string name="scan_scanning">扫描中</string>
     <string name="scan_result">扫描结果</string>
     <string name="scan_save">已保存设备</string>
+    <string name="scan_connect">连接</string>
 
 
 </resources>

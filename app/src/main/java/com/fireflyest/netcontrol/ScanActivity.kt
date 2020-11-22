@@ -1,5 +1,6 @@
 package com.fireflyest.netcontrol
 
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -9,7 +10,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.text.TextUtils
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -31,13 +31,18 @@ class ScanActivity : AppCompatActivity() {
 
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
 
-    private val startConnect = 1
+    private var backBluetooth: Bluetooth? = null
+
+    companion object{
+        const val START_CONNECTION = 1
+    }
 
     private val handler =
         Handler(Handler.Callback { msg ->
             when (msg.what) {
-                startConnect -> {
-
+                START_CONNECTION -> {
+                    backBluetooth = msg.obj as Bluetooth
+                    back()
                 }
                 else -> {
                 }
@@ -50,6 +55,8 @@ class ScanActivity : AppCompatActivity() {
      */
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
+            if(loading?.visibility == View.GONE) loading?.visibility = View.VISIBLE
+
             val action = intent.action
             if (BluetoothDevice.ACTION_FOUND == action) {
                 val device =
@@ -104,7 +111,7 @@ class ScanActivity : AppCompatActivity() {
         }
         this.setSupportActionBar(toolbar)
 
-        loading = findViewById(R.id.toolbar_scan_box);
+        loading = findViewById(R.id.toolbar_scan_box)
 
         swipeRefreshLayout = findViewById<SwipeRefreshLayout>(R.id.scan_refresh)?.apply {
             setOnRefreshListener { startScanBluetooth() }
@@ -117,6 +124,8 @@ class ScanActivity : AppCompatActivity() {
             itemAnimator = FallItemAnimator()
         }
 
+
+        this.startScanBluetooth()
     }
 
     /**
@@ -125,9 +134,12 @@ class ScanActivity : AppCompatActivity() {
     private fun initBluetooth() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (!bluetoothAdapter!!.isEnabled) {
-            ToastUtil.showShort(this, "蓝牙未开启");
+            ToastUtil.showShort(this, "蓝牙未开启")
             bluetoothAdapter?.enable()
         }
+        //注册广播接收
+        registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
+        registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -140,12 +152,18 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun back(){
+        val intent = Intent()
+        if (null != backBluetooth) {
+            intent.putExtra("name", backBluetooth!!.name)
+            intent.putExtra("address", backBluetooth!!.address)
+            setResult(Activity.RESULT_OK, intent)
+        } else {
+            setResult(Activity.RESULT_CANCELED, intent)
+        }
         finish()
     }
 
     private fun startScanBluetooth(){
-        loading?.visibility = View.VISIBLE
-
         swipeRefreshLayout?.isRefreshing = false
 
         bluetooths.clear()
@@ -156,13 +174,13 @@ class ScanActivity : AppCompatActivity() {
         bluetooths.clear()
         bluetoothAdapter!!.startDiscovery()
 
-        //注册广播接收
-        registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
-        registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
+        loading?.visibility = View.VISIBLE
+
     }
-    
-    private fun refreshConnected(){
-        
+
+    override fun onDestroy() {
+        unregisterReceiver(receiver)
+        super.onDestroy()
     }
 
 }

@@ -10,6 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar_scan_box"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -19,7 +20,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/toolbar_scan_bar"
-            android:visibility="gone"
             android:textStyle="bold"
             android:text="@string/scan_scanning"
             android:layout_marginEnd="4dp"/>
@@ -33,7 +33,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="gone"
             android:layout_marginEnd="26dp"
             style="?android:attr/progressBarStyleSmall"
             tools:targetApi="lollipop" />

@@ -1,8 +1,9 @@
 package com.fireflyest.netcontrol.adapter.bluetoothList
 
-import android.bluetooth.BluetoothClass
+import android.bluetooth.BluetoothClass.Device.Major
 import android.content.res.Resources
 import android.os.Handler
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.fireflyest.netcontrol.R
+import com.fireflyest.netcontrol.ScanActivity
 import com.fireflyest.netcontrol.bean.Bluetooth
+import com.fireflyest.netcontrol.util.AnimateUtil
 
 
 class BluetoothItemAdapter(
@@ -51,14 +54,14 @@ class BluetoothItemAdapter(
         holder.address?.text = bluetooth.address
         holder.rssi?.progress = 130 + bluetooth.rssi
         when (bluetooth.type) {
-            BluetoothClass.Device.Major.PHONE -> holder.type!!.setImageResource(R.drawable.ic_phone)
-            BluetoothClass.Device.Major.COMPUTER -> holder.type!!.setImageResource(R.drawable.ic_computer)
-            BluetoothClass.Device.Major.NETWORKING -> holder.type!!.setImageResource(R.drawable.ic_networking)
-            BluetoothClass.Device.Major.WEARABLE -> holder.type!!.setImageResource(R.drawable.ic_wearable)
-            BluetoothClass.Device.Major.HEALTH -> holder.type!!.setImageResource(R.drawable.ic_health)
-            BluetoothClass.Device.Major.TOY -> holder.type!!.setImageResource(R.drawable.ic_toy)
-            BluetoothClass.Device.Major.AUDIO_VIDEO -> holder.type!!.setImageResource(R.drawable.ic_audio)
-            BluetoothClass.Device.Major.PERIPHERAL -> holder.type!!.setImageResource(R.drawable.ic_peripheral)
+            Major.PHONE -> holder.type!!.setImageResource(R.drawable.ic_phone)
+            Major.COMPUTER -> holder.type!!.setImageResource(R.drawable.ic_computer)
+            Major.NETWORKING -> holder.type!!.setImageResource(R.drawable.ic_networking)
+            Major.WEARABLE -> holder.type!!.setImageResource(R.drawable.ic_wearable)
+            Major.HEALTH -> holder.type!!.setImageResource(R.drawable.ic_health)
+            Major.TOY -> holder.type!!.setImageResource(R.drawable.ic_toy)
+            Major.AUDIO_VIDEO -> holder.type!!.setImageResource(R.drawable.ic_audio)
+            Major.PERIPHERAL -> holder.type!!.setImageResource(R.drawable.ic_peripheral)
             0x1F00 -> if (bluetooth.name.contains("Mi Smart Band")) {
                 holder.type!!.setImageResource(R.drawable.ic_wearable)
             } else {
@@ -66,6 +69,22 @@ class BluetoothItemAdapter(
             }
             else -> holder.type!!.setImageResource(R.drawable.ic_bluetooth)
         }
+        holder.connect!!.setOnClickListener { v ->
+            val message: Message = handler!!.obtainMessage(ScanActivity.START_CONNECTION)
+            message.obj = bluetooth
+            message.sendToTarget()
+            AnimateUtil.hide(v, 300, 0)
+        }
+        holder.itemView.setOnClickListener {
+            if(holder.connect!!.visibility == View.GONE){
+                AnimateUtil.show(holder.connect!!, 300, 0, 1F, true)
+                AnimateUtil.hide(holder.rssi!!, 300, 0)
+            }else {
+                AnimateUtil.hide(holder.connect!!, 300, 0)
+                AnimateUtil.show(holder.rssi!!, 300, 0)
+            }
+        }
+
     }
 
     override fun getItemViewType(position: Int): Int {

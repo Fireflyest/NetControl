@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+  <group
+      android:name="stop"
+      android:pivotX="24.0"
+      android:pivotY="24.0">
+
+    <path
+        android:name="stop_1"
+        android:pathData="M31,17L17,17"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="@color/colorIconLight"
+        android:strokeLineCap="round"/>
+    <path
+        android:name="stop_2"
+        android:pathData="M31,31L31,17"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="@color/colorIconLight"
+        android:strokeLineCap="round"/>
+    <path
+        android:name="stop_3"
+        android:pathData="M17,31L31,31"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="@color/colorIconLight"
+        android:strokeLineCap="round"/>
+    <path
+        android:name="stop_4"
+        android:pathData="M17,17L17,31"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="@color/colorIconLight"
+        android:strokeLineCap="round"/>
+
+  </group>
+
+
+</vector>

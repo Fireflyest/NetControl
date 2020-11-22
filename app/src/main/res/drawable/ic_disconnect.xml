@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+
+  <group
+      android:name="connecting"
+      android:pivotX="24.0"
+      android:pivotY="24.0">
+
+    <path
+        android:pathData="M23.86,18.56l2.44,-2.44a4,4 0,0 1,5.58 0h0a4,4 0,0 1,0 5.58l-2.44,2.44"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#3d4446"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M24.14,29.44 L21.7,31.88a4,4 0,0 1,-5.58 0h0a4,4 0,0 1,0 -5.58l2.44,-2.44"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#3d4446"
+        android:strokeLineCap="round"/>
+
+    <path
+        android:name="connect"
+        android:pathData="M18.58,18.58L29.97,29.97"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeColor="#3d4446"
+        android:strokeLineCap="round"/>
+
+  </group>
+
+</vector>

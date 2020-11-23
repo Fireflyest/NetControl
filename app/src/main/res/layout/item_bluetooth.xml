@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_bluetooth"
     android:background="@drawable/round_white"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="10dp"
     android:paddingVertical="12dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -25,9 +25,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/item_bluetooth_type"
         app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/colorIcon"
-        android:textStyle="bold"
-        android:textSize="16sp"
+        android:theme="@style/text_bold"
         android:layout_marginStart="8dp"/>
 
     <TextView

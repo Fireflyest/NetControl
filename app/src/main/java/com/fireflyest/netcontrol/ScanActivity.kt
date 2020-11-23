@@ -106,9 +106,7 @@ class ScanActivity : AppCompatActivity() {
     private fun initView(){
         StatusBarUtil.StatusBarLightMode(this)
 
-        val toolbar: Toolbar = findViewById<Toolbar>(R.id.toolbar_scan).apply {
-            title = ""
-        }
+        val toolbar: Toolbar = findViewById<Toolbar>(R.id.toolbar_scan).apply { title = "" }
         this.setSupportActionBar(toolbar)
 
         loading = findViewById(R.id.toolbar_scan_box)
@@ -123,7 +121,6 @@ class ScanActivity : AppCompatActivity() {
             adapter = bluetoothItemAdapter
             itemAnimator = FallItemAnimator()
         }
-
 
         this.startScanBluetooth()
     }

@@ -41,13 +41,25 @@
     </style>
 
     <style name="text_bold">
-        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorIcon</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_emphasis">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textScaleX">1</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="text_max">
+        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textSize">64sp</item>
+        <item name="android:textScaleX">1.1</item>
         <item name="android:typeface">monospace</item>
         <item name="android:textStyle">bold</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
-
-
 
 </resources>

@@ -31,10 +31,8 @@ class BluetoothItemAdapter(
         var type: ImageView? = itemView.findViewById(R.id.item_bluetooth_type)
     }
 
-    fun addItem(bluetooth: Bluetooth?) {
-        if (bluetooth != null) {
-            bluetooths?.add(bluetooth)
-        }
+    fun addItem(bluetooth: Bluetooth) {
+        bluetooths?.add(bluetooth)
         notifyItemInserted(this.itemCount)
     }
 

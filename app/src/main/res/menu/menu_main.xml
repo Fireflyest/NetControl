@@ -4,7 +4,7 @@
 
 
     <item
-        android:id="@+id/nav_bluetooth"
+        android:id="@+id/nav_device"
         android:icon="@drawable/ic_device"
         android:title="@string/menu_device"
         app:showAsAction="always"/>

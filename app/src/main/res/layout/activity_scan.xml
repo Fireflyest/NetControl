@@ -32,6 +32,7 @@
             android:layout_width="350dp"
             android:layout_height="0dp"
             android:layout_marginTop="40dp"
+            android:overScrollMode="never"
             app:layout_constraintStart_toStartOf="@+id/scan_save_box"
             app:layout_constraintEnd_toEndOf="@+id/scan_save_box"
             app:layout_constraintBottom_toBottomOf="@+id/scan_save_box"
@@ -47,6 +48,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="@+id/scan_save_box"
             android:theme="@style/text_bold"
+            android:textColor="@color/colorPrimaryDark"
             android:text="@string/scan_save"/>
 
         <TextView
@@ -75,7 +77,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/scan_result_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:overScrollMode="never" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

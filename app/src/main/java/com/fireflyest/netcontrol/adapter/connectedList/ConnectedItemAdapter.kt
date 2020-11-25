@@ -38,7 +38,7 @@ class ConnectedItemAdapter(
         connecteds?.removeAt(position)
         notifyItemRemoved(position)
         if(connecteds?.size == 0){
-            addItem(Connected("", "暂无连接"))
+            addItem(Connected("", "暂无连接", false))
         }
     }
 

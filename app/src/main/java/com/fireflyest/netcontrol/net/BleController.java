@@ -122,6 +122,7 @@ public class BleController  implements BtController {
         if (gatt != null) {
             gatt.disconnect();
             gatt.close();
+            connectStateCallback.connectLost(address);
         }
         characteristicMap.remove(address);
         this.disconnectList.add(address);

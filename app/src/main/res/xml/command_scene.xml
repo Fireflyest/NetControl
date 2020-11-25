@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <ConstraintSet android:id="@+id/scene_command_edit">
+        <Constraint android:id="@id/command_send" >
+            <Layout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                motion:layout_constraintTop_toTopOf="parent"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintEnd_toEndOf="parent"/>
+        </Constraint>
+        <Constraint android:id="@id/command_more" >
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="12dp"
+                motion:layout_constraintTop_toTopOf="parent"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintEnd_toEndOf="parent"/>
+        </Constraint>
+        <Constraint android:id="@id/command_edit" >
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginEnd="12dp"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintEnd_toStartOf="@+id/command_send"/>
+        </Constraint>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/scene_command_none">
+        <Constraint android:id="@id/command_send" >
+            <Layout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                motion:layout_constraintTop_toTopOf="parent"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintStart_toEndOf="parent"/>
+        </Constraint>
+        <Constraint android:id="@id/command_more" >
+            <Layout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                motion:layout_constraintTop_toTopOf="parent"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintEnd_toEndOf="parent"/>
+        </Constraint>
+        <Constraint android:id="@id/command_edit" >
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginEnd="12dp"
+                motion:layout_constraintBottom_toBottomOf="parent"
+                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintEnd_toStartOf="@+id/command_more"/>
+        </Constraint>
+    </ConstraintSet>
+
+    <Transition
+        motion:constraintSetEnd="@id/scene_command_edit"
+        motion:constraintSetStart="@+id/scene_command_none" />
+</MotionScene>

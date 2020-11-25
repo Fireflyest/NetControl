@@ -26,12 +26,11 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    <androidx.fragment.app.FragmentContainerView-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/layout_left_header_box"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:theme="@style/layout_theme"-->
-<!--        android:name="com.fireflyest.btcontrol.ui.SettingFragment"-->
-<!--        android:id="@+id/setting_container"/>-->
+    <androidx.fragment.app.FragmentContainerView
+        app:layout_constraintTop_toBottomOf="@+id/layout_left_header_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.fireflyest.netcontrol.ui.SettingsFragment"
+        android:id="@+id/setting_container"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

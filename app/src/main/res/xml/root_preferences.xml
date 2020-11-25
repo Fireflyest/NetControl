@@ -1,34 +1,75 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory
+        app:icon="@drawable/ic_setting"
+        app:title="Setting">
 
-        <EditTextPreference
-            app:key="signature"
-            app:title="@string/signature_title"
-            app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat
+            app:key="auto_connect"
+            app:title="自动连接"
+            app:summaryOff="开启设备自动连接"
+            app:summaryOn="应用启用时尝试连接蓝牙"
+            app:defaultValue="false" />
 
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
+        <SwitchPreferenceCompat
+            app:key="hex_convert"
+            app:title="进制转换"
+            app:summaryOff="开启指令十六进制转换"
+            app:summaryOn="发送的指令转换为十六进制"
+            app:defaultValue="false" />
+
+<!--        <SwitchPreferenceCompat-->
+<!--            app:dependency="sync"-->
+<!--            app:key="attachment"-->
+<!--            app:summaryOff="@string/attachment_summary_off"-->
+<!--            app:summaryOn="@string/attachment_summary_on"-->
+<!--            app:title="@string/attachment_title" />-->
+
+<!--        <EditTextPreference-->
+<!--            app:key="signature"-->
+<!--            app:title="@string/signature_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
+
+<!--        <ListPreference-->
+<!--            app:defaultValue="reply"-->
+<!--            app:entries="@array/reply_entries"-->
+<!--            app:entryValues="@array/reply_values"-->
+<!--            app:key="reply"-->
+<!--            app:title="@string/reply_title"-->
+<!--            app:useSimpleSummaryProvider="true" />-->
 
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/sync_header">
+    <PreferenceCategory
+        app:icon="@drawable/ic_help"
+        app:title="Help">
 
-        <SwitchPreferenceCompat
-            app:key="sync"
-            app:title="@string/sync_title" />
+<!--        <SwitchPreferenceCompat-->
+<!--            app:key="sync"-->
+<!--            app:title="@string/sync_title" />-->
 
-        <SwitchPreferenceCompat
-            app:dependency="sync"
-            app:key="attachment"
-            app:summaryOff="@string/attachment_summary_off"
-            app:summaryOn="@string/attachment_summary_on"
-            app:title="@string/attachment_title" />
+<!--        <SwitchPreferenceCompat-->
+<!--            app:dependency="sync"-->
+<!--            app:key="attachment"-->
+<!--            app:summaryOff="@string/attachment_summary_off"-->
+<!--            app:summaryOn="@string/attachment_summary_on"-->
+<!--            app:title="@string/attachment_title" />-->
+
+        <Preference
+            app:key="feedback"
+            app:title="反馈">
+<!--            <intent-->
+<!--                android:targetPackage="com.fireflyest.btcontrol"-->
+<!--                android:targetClass="com.fireflyest.btcontrol.FeedbackActivity"/>-->
+        </Preference>
+
+        <Preference
+            app:key="version"
+            app:title="关于">
+<!--            <intent-->
+<!--                android:targetPackage="com.fireflyest.btcontrol"-->
+<!--                android:targetClass="com.fireflyest.btcontrol.VersionActivity"/>-->
+        </Preference>
 
     </PreferenceCategory>
 

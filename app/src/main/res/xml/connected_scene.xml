@@ -28,13 +28,14 @@
         <Constraint android:id="@id/main_connected_list">
             <Layout
                 android:layout_width="320dp"
-                android:layout_height="1dp"/>
+                android:layout_height="108dp"
+                android:layout_marginBottom="80dp"
+                motion:layout_constraintBottom_toTopOf="parent"/>
         </Constraint>
         <Constraint android:id="@id/main_connected_tool">
             <Layout
                 android:layout_width="0dp"
-                android:layout_height="12dp"
-                android:layout_marginTop="6dp"
+                android:layout_height="14dp"
                 android:layout_marginEnd="16dp"
                 motion:layout_constraintStart_toEndOf="@+id/main_connected_list"
                 motion:layout_constraintEnd_toEndOf="parent"

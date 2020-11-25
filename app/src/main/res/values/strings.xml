@@ -2,6 +2,9 @@
     <string name="app_name">NetControl</string>
     <string name="app_empty"> </string>
     <string name="app_add">添加</string>
+    <string name="app_close">关闭</string>
+    <string name="app_edit">修改</string>
+    <string name="app_more">更多</string>
 
     <string name="menu_device">设备</string>
     <string name="menu_setting">设置</string>
@@ -30,5 +33,7 @@
     <string name="scan_save">已保存设备</string>
     <string name="scan_connect">连接</string>
 
+    <string name="command_send">发送</string>
+    <string name="command_hint">点击输入指令</string>
 
 </resources>

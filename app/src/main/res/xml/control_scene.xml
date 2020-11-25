@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <ConstraintSet android:id="@+id/control_scene_un">
+        <Constraint android:id="@+id/main_select_box" >
+            <Layout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="22dp"
+                motion:layout_constraintBottom_toTopOf="parent"/>
+        </Constraint>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/control_scene_success">
+        <Constraint android:id="@id/main_select_box" >
+            <Layout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="12dp"
+                android:paddingVertical="16dp"
+                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintEnd_toEndOf="parent"
+                motion:layout_constraintTop_toTopOf="parent"/>
+        </Constraint>
+    </ConstraintSet>
+
+    <Transition
+        motion:constraintSetEnd="@id/control_scene_success"
+        motion:constraintSetStart="@+id/control_scene_un" />
+</MotionScene>

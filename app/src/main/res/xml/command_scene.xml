@@ -65,6 +65,7 @@
     </ConstraintSet>
 
     <Transition
+        motion:duration="200"
         motion:constraintSetEnd="@id/scene_command_edit"
         motion:constraintSetStart="@+id/scene_command_none" />
 </MotionScene>

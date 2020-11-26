@@ -1,6 +1,7 @@
 package com.fireflyest.netcontrol
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
@@ -26,19 +27,24 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fireflyest.netcontrol.adapter.connectedList.ConnectedItemAdapter
 import com.fireflyest.netcontrol.bean.Connected
+import com.fireflyest.netcontrol.bean.Device
 import com.fireflyest.netcontrol.data.DataService
 import com.fireflyest.netcontrol.net.BtController
 import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.net.callback.ConnectStateCallback
 import com.fireflyest.netcontrol.util.AnimateUtil
+import com.fireflyest.netcontrol.util.CalendarUtil
 import com.fireflyest.netcontrol.util.StatusBarUtil
 import com.fireflyest.netcontrol.util.ToastUtil
+import kotlin.collections.ArrayList
+import android.util.Pair as UtilPair
 
 class MainActivity : AppCompatActivity() {
 
     private var drawerLayout: DrawerLayout? = null
 
     private val connecteds: MutableList<Connected> = ArrayList()
+    private val devices: MutableList<String> = ArrayList()
 
     private var connectedItemAdapter: ConnectedItemAdapter? = null
     private var btController: BtController? = null
@@ -63,6 +69,8 @@ class MainActivity : AppCompatActivity() {
         const val SEND_TOAST = 7
         const val SUCCEED_CONNECT = 8
         const val CLOSE_CONNECT = 9
+        const val UPDATE_CONNECTED = 10
+        const val EDIT_DEVICE = 11
     }
 
     private val handler: Handler = Handler(Handler.Callback { msg ->
@@ -87,6 +95,9 @@ class MainActivity : AppCompatActivity() {
                     connectedAddress = null
                     controlMotion!!.transitionToState(R.id.control_scene_un)
                 }
+                UPDATE_CONNECTED ->{
+                    connectedItemAdapter!!.notifyItemChanged(msg.obj as Int)
+                }
 //                REFRESH_CARDS -> deviceAdapter.notifyDataSetChanged()
 //                REFRESH_PAGER -> pagerAdapter.notifyDataSetChanged()
 //                REFRESH_INDEX -> {
@@ -110,10 +121,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        this.initData()
         //初始化蓝牙控制器
         this.initBleController()
         this.initView()
+        this.initData()
     }
 
     override fun onActivityResult(
@@ -136,6 +147,18 @@ class MainActivity : AppCompatActivity() {
                 connectedItemAdapter?.addItem(Connected(address!!, name!!, false))
                 btController!!.connect(this, address)
                 connectedMotion!!.transitionToState(R.id.connected_scene_top)
+            }
+            EDIT_DEVICE ->{
+                val name = data.getStringExtra("name")
+                val address = data.getStringExtra("address")
+                selectName!!.text = name
+                for((num, connected) in connecteds.withIndex()){
+                    if(connected.address == address){
+                        connected.name = name!!
+                        handler.obtainMessage(UPDATE_CONNECTED, num).sendToTarget()
+                        return
+                    }
+                }
             }
 //            REQUEST_MODE, REQUEST_COMMAND -> {
 //                val mode = data.getStringExtra("mode")
@@ -188,10 +211,26 @@ class MainActivity : AppCompatActivity() {
             override fun connectSucceed(deviceAddress: String){
                 for(connected in connecteds){
                     if(connected.address != deviceAddress) continue
+                    connected.save = true
                     handler.obtainMessage(SEND_TOAST, "成功连接: ${connected.name}").sendToTarget()
                     handler.obtainMessage(SUCCEED_CONNECT, connected).sendToTarget()
+                    handler.obtainMessage(UPDATE_CONNECTED, connecteds.indexOf(connected)).sendToTarget()
                     Thread(Runnable {
-
+                        if(!devices.contains(deviceAddress)){
+                            val uuid: Array<String> = getUUID(connected.name)
+                            val device = Device(
+                                deviceAddress,
+                                connected.name,
+                                connected.name,
+                                "",
+                                uuid[0],
+                                uuid[1],
+                                false,
+                                CalendarUtil.getDate()
+                            )
+                            dataService!!.deviceDao.insert(device)
+                            devices.add(deviceAddress)
+                        }
                     }).start()
                     break
                 }
@@ -210,6 +249,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun initData(){
         dataService = DataService.instance
+
+        Thread(Runnable {
+            for(device in dataService!!.deviceDao.queryAll()){
+                devices.add(device.address)
+                if(device.display!!){
+                    connectedItemAdapter?.addItem(Connected(device.address, device.name!!, true))
+                }
+            }
+        }).start()
     }
 
     private fun initView(){
@@ -227,8 +275,8 @@ class MainActivity : AppCompatActivity() {
         }
         connectedItemAdapter?.addItem(Connected("请扫描并添加设备", "暂无连接", false))
 
-        selectName = findViewById(R.id.main_select_name)
-        selectAddress = findViewById(R.id.main_select_address)
+        selectName = findViewById(R.id.select_name)
+        selectAddress = findViewById(R.id.select_address)
         connectedMotion = findViewById(R.id.main_connected_box)
         controlMotion = findViewById(R.id.main_control_box)
         commandMotion = findViewById(R.id.main_command_box)
@@ -242,6 +290,19 @@ class MainActivity : AppCompatActivity() {
         selectEdit = findViewById<ImageButton>(R.id.main_select_edit).apply {
             setOnClickListener {
                 AnimateUtil.click(it, 100)
+                connectedAddress?.let {a->
+                    val intent = Intent(this@MainActivity, DeviceActivity::class.java)
+                    intent.putExtra("address", a)
+                    for(connected in connecteds) {
+                        if (connected.address != a) continue
+                        intent.putExtra("name", connected.name)
+                        break
+                    }
+                    val options = ActivityOptions.makeSceneTransitionAnimation(this@MainActivity,
+                        UtilPair.create(selectName as View, "device_name"),
+                        UtilPair.create(selectAddress as View, "device_address"))
+                    startActivityForResult(intent, EDIT_DEVICE, options.toBundle())
+                }
             }
         }
 
@@ -266,7 +327,6 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -275,7 +335,7 @@ class MainActivity : AppCompatActivity() {
             android.R.id.home -> drawerLayout?.openDrawer(GravityCompat.START)
             R.id.nav_device -> {
                 intent = Intent(this, ScanActivity::class.java)
-                this.startActivityForResult(intent, REQUEST_BLUETOOTH)
+                this.startActivityForResult(intent, REQUEST_BLUETOOTH, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
             }
             else -> {
             }
@@ -332,6 +392,25 @@ class MainActivity : AppCompatActivity() {
             return event.x <= left || event.x >= right || event.y <= top || event.y >= bottom
         }
         return false
+    }
+
+    private fun getUUID(name: String): Array<String>{
+        val uuid: Array<String> = Array(2) {""}
+        when (name) {
+            "Ai-Thinker" -> {
+                uuid[0] = "00010203-0405-0607-0809-0a0b0c0d1910"
+                uuid[1] = "00010203-0405-0607-0809-0a0b0c0d2b10"
+            }
+            "MLT-BT05", "HC-42", "JDY-24M" -> {
+                uuid[0] = "0000ffe0-0000-1000-8000-00805f9b34fb"
+                uuid[1] = "0000ffe1-0000-1000-8000-00805f9b34fb"
+            }
+            else -> {
+                uuid[0] = ""
+                uuid[1] = ""
+            }
+        }
+        return uuid
     }
 
 }

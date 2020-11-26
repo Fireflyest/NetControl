@@ -10,7 +10,7 @@ data class Device (
     var alias: String?,
     var desc: String?,
     var service: String?,
-    var char: String?,
+    var characteristic: String?,
     var display: Boolean?,
     var time: Long = 0
 ){

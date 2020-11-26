@@ -19,7 +19,6 @@ class ConnectedItemAdapter(
 ) : RecyclerView.Adapter<ConnectedItemAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        var resource: Resources? = itemView.resources
         var name: TextView? = itemView.findViewById(R.id.item_connected_name)
         var address: TextView? = itemView.findViewById(R.id.item_connected_address)
         var angle: ImageView? = itemView.findViewById(R.id.item_connected_angle)
@@ -56,14 +55,13 @@ class ConnectedItemAdapter(
         val connected :Connected = connecteds!![position]
         if("暂无连接" == connected.name){
             holder.itemView.setBackgroundResource(R.drawable.round_background)
-            holder.angle?.visibility = View.GONE
         }else{
             holder.itemView.setBackgroundResource(R.drawable.round_white)
-            holder.angle?.visibility = View.VISIBLE
             holder.itemView.setOnClickListener {
                 handler!!.obtainMessage(MainActivity.SELECT_BLUETOOTH, connected).sendToTarget()
             }
         }
+        holder.angle?.visibility = if(connected.save) View.VISIBLE else View.GONE
         holder.name?.text = connected.name
         holder.address?.text = connected.address
     }

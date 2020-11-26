@@ -12,6 +12,16 @@
         <item name="customColorValue">@color/colorForeground</item>
         <item name="titleTextColor">@color/colorText</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition">@transition/change</item>
+        <item name="android:windowExitTransition">@transition/change</item>
+
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/share_change</item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/share_change</item>
     </style>
 
 

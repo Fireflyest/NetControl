@@ -1,32 +1,21 @@
 <resources>
     <string name="app_name">NetControl</string>
+    <string name="app_version">1.0.0</string>
     <string name="app_empty"> </string>
     <string name="app_add">添加</string>
     <string name="app_close">关闭</string>
     <string name="app_edit">修改</string>
     <string name="app_more">更多</string>
+    <string name="app_rename">更名</string>
+    <string name="app_delete">删除</string>
+    <string name="app_done">确认</string>
+    <string name="app_display">展示</string>
 
     <string name="menu_device">设备</string>
     <string name="menu_setting">设置</string>
     <string name="menu_batch">批量</string>
     <string name="menu_all">全选</string>
     <string name="menu_invert">反选</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-
 
     <string name="scan_scanning">扫描中</string>
     <string name="scan_result">扫描结果</string>
@@ -35,5 +24,8 @@
 
     <string name="command_send">发送</string>
     <string name="command_hint">点击输入指令</string>
+
+    <string name="device_time">创建于: </string>
+
 
 </resources>

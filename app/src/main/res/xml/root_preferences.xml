@@ -18,6 +18,13 @@
             app:summaryOn="发送的指令转换为十六进制"
             app:defaultValue="false" />
 
+        <SwitchPreferenceCompat
+            app:key="cancel_notify"
+            app:title="取消反馈"
+            app:summaryOff="不接收设备返回信息"
+            app:summaryOn="发送指令后不会收到反馈"
+            app:defaultValue="false" />
+
 <!--        <SwitchPreferenceCompat-->
 <!--            app:dependency="sync"-->
 <!--            app:key="attachment"-->
@@ -57,7 +64,8 @@
 
         <Preference
             app:key="feedback"
-            app:title="反馈">
+            app:title="反馈"
+            app:summary="提交错误或提供建议">
 <!--            <intent-->
 <!--                android:targetPackage="com.fireflyest.btcontrol"-->
 <!--                android:targetClass="com.fireflyest.btcontrol.FeedbackActivity"/>-->
@@ -65,7 +73,8 @@
 
         <Preference
             app:key="version"
-            app:title="关于">
+            app:title="关于"
+            app:summary="@string/app_version">
 <!--            <intent-->
 <!--                android:targetPackage="com.fireflyest.btcontrol"-->
 <!--                android:targetClass="com.fireflyest.btcontrol.VersionActivity"/>-->

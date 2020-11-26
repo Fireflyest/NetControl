@@ -157,7 +157,7 @@ class ScanActivity : AppCompatActivity() {
         } else {
             setResult(Activity.RESULT_CANCELED, intent)
         }
-        finish()
+        finishAfterTransition()
     }
 
     private fun startScanBluetooth(){

@@ -2,6 +2,7 @@ package com.fireflyest.netcontrol
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +11,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -20,10 +25,12 @@ import com.fireflyest.netcontrol.adapter.charsList.CharsItemAdapter
 import com.fireflyest.netcontrol.bean.Chars
 import com.fireflyest.netcontrol.bean.Device
 import com.fireflyest.netcontrol.data.DataService
+import com.fireflyest.netcontrol.net.BtController
 import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.util.AnimateUtil
 import com.fireflyest.netcontrol.util.CalendarUtil
 import com.fireflyest.netcontrol.util.StatusBarUtil
+import com.fireflyest.netcontrol.util.ToastUtil
 
 
 class DeviceActivity : AppCompatActivity() {
@@ -55,7 +62,6 @@ class DeviceActivity : AppCompatActivity() {
     companion object{
         const val UPDATE_DATA = 1
         const val SELECT_SERVICE = 2
-        const val SELECT_CHARACTERISTIC = 3
     }
 
     private val handler = Handler(Handler.Callback { msg ->
@@ -71,14 +77,16 @@ class DeviceActivity : AppCompatActivity() {
 
             }
             SELECT_SERVICE -> {
-                device?.service = msg.obj as String
-            }
-            SELECT_CHARACTERISTIC -> {
-                device?.characteristic = msg.obj as String
+                val service = (msg.obj as Array<*>)[0] as String
+                val characteristic = (msg.obj as Array<*>)[1] as String
+                device?.service = service
+                device?.characteristic = characteristic
+                BtManager.getBtController().setCharacteristic(selectAddress, service, characteristic)
                 charss.clear()
                 charsItemAdapter!!.notifyDataSetChanged()
                 updateDevice()
                 refreshService()
+                ToastUtil.showShort(this@DeviceActivity, "服务特征更新")
             }
             else->{
             }
@@ -120,16 +128,34 @@ class DeviceActivity : AppCompatActivity() {
         deviceDelete = findViewById<ImageButton>(R.id.device_delete).apply {
             setOnClickListener {
                 AnimateUtil.click(it, 100)
+                AlertDialog.Builder(this@DeviceActivity).apply {
+                    setMessage("您确认要删除此设备吗")
+                    setTitle(selectName)
+                    setPositiveButton(R.string.app_done
+                    ) { dialog, _ ->
+                        BtManager.getBtController().closeConnect(selectAddress)
+                        dialog.dismiss()
+                        back(Activity.RESULT_CANCELED)
+                    }
+                    setNegativeButton(R.string.app_cancel
+                    ) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                    create()
+                    show()
+                }
             }
         }
         deviceDone = findViewById<ImageButton>(R.id.device_done).apply {
             setOnClickListener {
                 AnimateUtil.click(it, 100)
                 deviceMotion!!.transitionToState(R.id.device_scene_start)
+                if(selectName == renameEdit!!.text.toString())return@setOnClickListener
                 selectName = renameEdit!!.text.toString()
                 deviceName!!.text  = selectName
                 device!!.name = selectName
                 updateDevice()
+                ToastUtil.showShort(this@DeviceActivity, "设备已更名")
             }
         }
         deviceCancel = findViewById<ImageButton>(R.id.device_cancel).apply {
@@ -137,6 +163,7 @@ class DeviceActivity : AppCompatActivity() {
                 AnimateUtil.click(it, 100)
                 renameEdit!!.setText(selectName)
                 deviceMotion!!.transitionToState(R.id.device_scene_start)
+                ToastUtil.showShort(this@DeviceActivity, "取消更名")
             }
         }
         renameEdit = findViewById<EditText>(R.id.device_rename_edit).apply {
@@ -174,19 +201,24 @@ class DeviceActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> back()
+            android.R.id.home -> back(Activity.RESULT_OK)
             else -> {
             }
         }
         return true
     }
 
-    private fun back(){
+    private fun back(result: Int){
         val intent = Intent()
         intent.putExtra("name", selectName)
         intent.putExtra("address", selectAddress)
-        setResult(Activity.RESULT_OK, intent)
+        setResult(result, intent)
         finishAfterTransition()
+    }
+
+    override fun onBackPressed() {
+        back(Activity.RESULT_OK)
+        super.onBackPressed()
     }
 
     private fun refreshService(){
@@ -260,17 +292,16 @@ class DeviceActivity : AppCompatActivity() {
     }
 
     private fun getProprty(p: Int): String? {
-        return when (p) {
-            0x01 -> "广播"
-            0x02 -> "读取"
-            0x04 -> "无回应写入"
-            0x08 -> "写入"
-            0x10 -> "反馈通知"
-            0x20 -> "指示"
-            0x40 -> "带签名写入"
-            0x80 -> "扩展属性"
-            else -> "未知"
-        }
+        val builder = StringBuilder()
+        if (p and 0x01 != 0) builder.append("广播,")
+        if (p and 0x02 != 0) builder.append("读取,")
+        if (p and 0x04 != 0) builder.append("无回应写入,")
+        if (p and 0x08 != 0) builder.append("写入,")
+        if (p and 0x10 != 0) builder.append("反馈信息,")
+        if (p and 0x20 != 0) builder.append("指示,")
+        if (p and 0x40 != 0) builder.append("带签名写入,")
+        if (p and 0x80 != 0) builder.append("扩展属性,")
+        return builder.toString().trim(',')
     }
 
 }

@@ -1,7 +1,5 @@
 package com.fireflyest.netcontrol.adapter.charsList
 
-import android.content.res.ColorStateList
-import android.content.res.Resources
 import android.graphics.Color
 import android.os.Handler
 import android.view.LayoutInflater
@@ -12,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fireflyest.netcontrol.DeviceActivity
 import com.fireflyest.netcontrol.R
 import com.fireflyest.netcontrol.bean.Chars
+import com.fireflyest.netcontrol.net.BtManager
 
 
 class CharsItemAdapter(private var charss: MutableList<Chars>, private var handler: Handler) :
@@ -49,8 +48,7 @@ class CharsItemAdapter(private var charss: MutableList<Chars>, private var handl
                 if(!chars.title){
                     holder.line.visibility = View.VISIBLE
                     holder.itemView.setOnClickListener {
-                        handler.obtainMessage(DeviceActivity.SELECT_SERVICE, chars.belong).sendToTarget()
-                        handler.obtainMessage(DeviceActivity.SELECT_CHARACTERISTIC, chars.right).sendToTarget()
+                        handler.obtainMessage(DeviceActivity.SELECT_SERVICE, arrayOf(chars.belong, chars.right)).sendToTarget()
                     }
                 }
             }
@@ -61,11 +59,6 @@ class CharsItemAdapter(private var charss: MutableList<Chars>, private var handl
 
     override fun getItemCount(): Int {
         return charss.size
-    }
-
-    fun addItem(chars: Chars) {
-        charss.add(chars)
-        notifyItemInserted(charss.size)
     }
 
     override fun getItemViewType(position: Int): Int {

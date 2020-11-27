@@ -15,10 +15,10 @@ interface CommandDao {
     @Query("SELECT * FROM command WHERE id IN (:id)")
     fun loadAllByIds(id: IntArray): Array<Command>
 
-    @Query("SELECT * FROM command WHERE time > :time LIMIT 20")
+    @Query("SELECT * FROM command WHERE time > :time")
     fun findByTime(time: Long): Array<Command>
 
-    @Query("SELECT * FROM command WHERE address like :address LIMIT 50")
+    @Query("SELECT * FROM command WHERE address like :address")
     fun findByAddress(address: String): Array<Command>
 
     @Insert

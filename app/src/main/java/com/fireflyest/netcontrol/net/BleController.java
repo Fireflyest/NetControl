@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class BleController  implements BtController {
+public class BleController implements BtController {
 
     //输入日志标记
     public static final String LOG_TAG = "BLE_Controller";
@@ -50,6 +51,10 @@ public class BleController  implements BtController {
     //读操作请求队列
     private ReceiverRequestQueue receiverRequestQueue = new ReceiverRequestQueue();
 
+    private boolean enableNotify;
+
+    private boolean enableHex;
+
     //默认连接超时时间:6s
     private static final int CONNECTION_TIME_OUT = 6000;
 
@@ -66,6 +71,8 @@ public class BleController  implements BtController {
     public void init(BluetoothManager bluetoothManager) {
         this.bluetoothAdapter = bluetoothManager.getAdapter();
         this.bleGattCallback = new BleGattCallback();
+        this.enableNotify = true;
+        this.enableHex = false;
     }
 
     @Override
@@ -106,12 +113,18 @@ public class BleController  implements BtController {
             return;
         }
 
+        if(enableHex){
+            characteristic.setValue(bytesToHexString(buf));
+            Log.e(LOG_TAG, "发送数据 -> " +bytesToHexString(buf));
+        }else {
+            bytesToHexString(buf);
+            Log.e(LOG_TAG, "发送数据 -> " +Arrays.toString(buf));
+        }
 
-        characteristic.setValue(buf);
         BluetoothGatt gatt = gattMap.get(address);
         if (gatt != null) {
             boolean b = gatt.writeCharacteristic(characteristic);
-            Log.e(LOG_TAG, "Send:" + b + " data：" + Arrays.toString(buf));
+            Log.e(LOG_TAG, "发送 -> " + (b ? "成功":"失败"));
         }
 
     }
@@ -128,24 +141,6 @@ public class BleController  implements BtController {
         this.disconnectList.add(address);
     }
 
-    @Override
-    public boolean isConnected(String address) {
-        BluetoothGatt gatt = gattMap.get(address);
-        if (gatt == null) {
-            return false;
-        }else {
-            return characteristicMap.containsKey(address);
-        }
-    }
-
-    @Override
-    public List<BluetoothDevice> getDeviceList() {
-        final List<BluetoothDevice> devices = new ArrayList<>();
-        for(BluetoothGatt gatt : gattMap.values()){
-            devices.add(gatt.getDevice());
-        }
-        return devices;
-    }
 
     @Override
     public BluetoothGatt getGatt(String address) {
@@ -162,8 +157,78 @@ public class BleController  implements BtController {
         receiverRequestQueue.removeRequest(requestKey);
     }
 
+    @Override
+    public void enableNotify(String address) {
+        BluetoothGatt gatt = gattMap.get(address);
+        if (gatt == null) {
+            Log.e(LOG_TAG, "蓝牙未连接 -> " + address);
+            return;
+        }
+
+        BluetoothGattCharacteristic gattCharacteristic = characteristicMap.get(address);
+        if (gattCharacteristic == null) {
+            Log.e(LOG_TAG, "蓝牙未配置 -> " + address);
+            return;
+        }
+
+        if((gattCharacteristic.getProperties() & 0x10) == 0)return;
+        if (gatt.setCharacteristicNotification(gattCharacteristic, true)){
+            BluetoothGattDescriptor clientConfig = gattCharacteristic.getDescriptor(BLUETOOTH_NOTIFY_D);
+            if (clientConfig == null) return;
+            clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+            gatt.writeDescriptor(clientConfig);
+        }
+
+    }
+
+    @Override
+    public void setEnableNotify(boolean enable){
+        this.enableNotify = enable;
+    }
+
+    @Override
+    public void setCharacteristic(String address, String service, String characteristic) {
+        BluetoothGatt gatt = gattMap.get(address);
+        if (gatt == null) {
+            Log.e(LOG_TAG, "蓝牙未连接 -> " + address);
+            return;
+        }
+        BluetoothGattService gattService = gatt.getService(UUID.fromString(service));
+        if (gattService == null) {
+            Log.e(LOG_TAG, "未找到服务 -> " + service);
+            return;
+        }
+
+        BluetoothGattCharacteristic gattCharacteristic = gattService.getCharacteristic(UUID.fromString(characteristic));
+        characteristicMap.put(address, gattCharacteristic);
+
+    }
+
+    @Override
+    public void setEnableHex(boolean enable) {
+        this.enableHex = enable;
+    }
+
 
     /*##################################################################################3*/
+
+    /**
+     * 将byte数组转为16进制字符串 此方法主要目的为方便Log的显示
+     */
+    public String bytesToHexString(byte[] src) {
+        StringBuilder result = new StringBuilder();
+        for (byte b : src) {
+
+            String hexString = Integer.toHexString(b & 0xFF);
+            if (hexString.length() == 1) {
+                hexString = '0' + hexString;
+            }
+
+            result.append(hexString.toUpperCase());
+        }
+        return result.toString();
+    }
+
 
     /**
      * 蓝牙GATT连接及操作事件回调
@@ -174,8 +239,6 @@ public class BleController  implements BtController {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             String address = gatt.getDevice().getAddress();
             if (newState == BluetoothProfile.STATE_CONNECTED) { //连接成功
-                connectStateCallback.connectSucceed(address);
-                gattMap.put(address, gatt);
                 gatt.discoverServices();
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {   //断开连接
                 connectStateCallback.connectLost(address);
@@ -189,37 +252,21 @@ public class BleController  implements BtController {
         //服务被发现了
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-
-            UUID bluetooth_s, bluetooth_notify_c;
-
-            BluetoothDevice device = gatt.getDevice();
-            Log.e(LOG_TAG, "设备服务发现 -> " + device.getAddress());
-            switch (device.getName()){
-                case "Ai-Thinker":
-                    bluetooth_s = UUID.fromString("00010203-0405-0607-0809-0a0b0c0d1910");
-                    bluetooth_notify_c = UUID.fromString("00010203-0405-0607-0809-0a0b0c0d2b10");
-                    break;
-                case "MLT-BT05":
-                case "HC-42":
-                default:
-                    bluetooth_s = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
-                    bluetooth_notify_c = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
-                    break;
-            }
-
-            //开启反馈
-            BluetoothGattCharacteristic characteristic = gatt.getService(bluetooth_s).getCharacteristic(bluetooth_notify_c);
-            if (characteristic == null) {
-                Log.e(LOG_TAG, "未发现所需特征 -> " + device.getAddress());
-                return;
-            }
-            Log.e(LOG_TAG, "特征 -> " + Integer.toHexString(characteristic.getProperties()));
-            characteristicMap.put(device.getAddress(), characteristic);
-            if (gatt.setCharacteristicNotification(characteristic, true)){
-                BluetoothGattDescriptor clientConfig = characteristic.getDescriptor(BLUETOOTH_NOTIFY_D);
-                if (clientConfig == null) return;
-                clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                gatt.writeDescriptor(clientConfig);
+            String address = gatt.getDevice().getAddress();
+            connectStateCallback.connectSucceed(address);
+            gattMap.put(address, gatt);
+            if(enableNotify){
+                for(BluetoothGattService service : gatt.getServices()){
+                    for(BluetoothGattCharacteristic  characteristic: service.getCharacteristics()){
+                        if((characteristic.getProperties() & 0x10) == 0)continue;
+                        if (gatt.setCharacteristicNotification(characteristic, true)){
+                            BluetoothGattDescriptor clientConfig = characteristic.getDescriptor(BLUETOOTH_NOTIFY_D);
+                            if (clientConfig == null) continue;
+                            clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                            gatt.writeDescriptor(clientConfig);
+                        }
+                    }
+                }
             }
         }
 
@@ -227,7 +274,7 @@ public class BleController  implements BtController {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, final BluetoothGattCharacteristic characteristic) {
             Log.e(LOG_TAG, "接收数据: "+ Arrays.toString(characteristic.getValue()));
-            final OnReceiverCallback callback = receiverRequestQueue.get(gatt.getDevice().getAddress());
+            final OnReceiverCallback callback = receiverRequestQueue.get("mainActivity");
             if(callback == null)return;
             final byte[] data = characteristic.getValue();
             runOnMainThread(new Runnable() {

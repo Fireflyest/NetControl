@@ -48,9 +48,9 @@
         <androidx.constraintlayout.motion.widget.MotionLayout
             android:id="@+id/main_control_box"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/main_connected_box"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/command_list"
             android:background="?attr/customColorValue"
             app:layoutDescription="@xml/control_scene">
 
@@ -85,45 +85,57 @@
                     app:layout_constraintStart_toStartOf="@+id/select_name"/>
 
                 <ImageButton
-                    android:id="@+id/main_select_close"
+                    android:id="@+id/main_select_clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toStartOf="@+id/main_select_edit"
                     app:layout_constraintTop_toTopOf="@+id/select_name"
                     app:layout_constraintBottom_toBottomOf="@+id/select_address"
                     android:background="@android:color/transparent"
-                    android:contentDescription="@string/app_close"
-                    android:src="@drawable/ic_close"/>
+                    android:contentDescription="@string/app_clear"
+                    android:src="@drawable/ic_clear"/>
 
                 <ImageButton
                     android:id="@+id/main_select_edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/main_select_close"
                     app:layout_constraintTop_toTopOf="@+id/select_name"
                     app:layout_constraintBottom_toBottomOf="@+id/select_address"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/app_edit"
                     android:src="@drawable/ic_edit"/>
 
+                <ImageButton
+                    android:id="@+id/main_select_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/select_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/select_address"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_close"
+                    android:src="@drawable/ic_close"/>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/command_list"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginBottom="48dp"
-                android:overScrollMode="never"
-                app:layout_constraintTop_toBottomOf="@+id/main_select_box"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
         </androidx.constraintlayout.motion.widget.MotionLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/command_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?attr/customColorValue"
+            android:overScrollMode="never"
+            app:layout_constraintTop_toBottomOf="@+id/main_control_box"
+            app:layout_constraintBottom_toTopOf="@+id/main_command_box"/>
 
         <androidx.constraintlayout.motion.widget.MotionLayout
             android:id="@+id/main_command_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?attr/customColorValue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layoutDescription="@xml/command_scene">
 

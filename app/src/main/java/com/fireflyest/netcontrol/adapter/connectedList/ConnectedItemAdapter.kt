@@ -1,6 +1,5 @@
 package com.fireflyest.netcontrol.adapter.connectedList
 
-import android.content.res.Resources
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View

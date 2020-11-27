@@ -23,7 +23,6 @@ class BluetoothItemAdapter(
 ) : RecyclerView.Adapter<BluetoothItemAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        var resource: Resources? = itemView.resources
         var name: TextView? = itemView.findViewById(R.id.item_bluetooth_name)
         var address: TextView? = itemView.findViewById(R.id.item_bluetooth_address)
         var rssi: ProgressBar? = itemView.findViewById(R.id.item_bluetooth_rssi)

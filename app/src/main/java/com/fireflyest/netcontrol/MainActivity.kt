@@ -5,6 +5,7 @@ import android.app.ActivityOptions
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -13,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
@@ -23,20 +25,25 @@ import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.fireflyest.netcontrol.adapter.commandList.CommandItemAdapter
 import com.fireflyest.netcontrol.adapter.connectedList.ConnectedItemAdapter
+import com.fireflyest.netcontrol.anim.FloatItemAnimator
+import com.fireflyest.netcontrol.bean.Command
 import com.fireflyest.netcontrol.bean.Connected
 import com.fireflyest.netcontrol.bean.Device
 import com.fireflyest.netcontrol.data.DataService
 import com.fireflyest.netcontrol.net.BtController
 import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.net.callback.ConnectStateCallback
+import com.fireflyest.netcontrol.net.callback.OnWriteCallback
 import com.fireflyest.netcontrol.util.AnimateUtil
 import com.fireflyest.netcontrol.util.CalendarUtil
 import com.fireflyest.netcontrol.util.StatusBarUtil
 import com.fireflyest.netcontrol.util.ToastUtil
-import kotlin.collections.ArrayList
 import android.util.Pair as UtilPair
 
 class MainActivity : AppCompatActivity() {
@@ -44,11 +51,15 @@ class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
 
     private val connecteds: MutableList<Connected> = ArrayList()
+    private val commands: MutableList<Command> = ArrayList()
     private val devices: MutableList<String> = ArrayList()
 
     private var connectedItemAdapter: ConnectedItemAdapter? = null
+    private var commandItemAdapter: CommandItemAdapter? = null
     private var btController: BtController? = null
     private var dataService: DataService? = null
+    private var sharedPreferences: SharedPreferences? =null
+    private var listener: SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     private var selectName: TextView? = null
     private var selectAddress: TextView? = null
@@ -57,10 +68,14 @@ class MainActivity : AppCompatActivity() {
     private var commandMotion: MotionLayout? = null
     private var selectClose: ImageButton? = null
     private var selectEdit: ImageButton? = null
+    private var selectClear: ImageButton? = null
     private var commandMore: ImageButton? = null
     private var commandEdit: EditText? = null
+    private var commandSend: TextView? = null
+    private var commandList: RecyclerView? = null
 
     private var connectedAddress: String? = null
+    private var lastTime: Long = 0
 
     companion object{
         const val REQUEST_BLUETOOTH = 1
@@ -71,6 +86,8 @@ class MainActivity : AppCompatActivity() {
         const val CLOSE_CONNECT = 9
         const val UPDATE_CONNECTED = 10
         const val EDIT_DEVICE = 11
+        const val ADD_COMMAND = 12
+        const val REFRESH_COMMAND = 13
     }
 
     private val handler: Handler = Handler(Handler.Callback { msg ->
@@ -98,18 +115,13 @@ class MainActivity : AppCompatActivity() {
                 UPDATE_CONNECTED ->{
                     connectedItemAdapter!!.notifyItemChanged(msg.obj as Int)
                 }
-//                REFRESH_CARDS -> deviceAdapter.notifyDataSetChanged()
-//                REFRESH_PAGER -> pagerAdapter.notifyDataSetChanged()
-//                REFRESH_INDEX -> {
-//                    val index: Index = msg.obj as Index
-//                    indexItemAdapter.addItem(index)
-//                }
-//                SELECT_CARDS -> {
-//                    deviceCards.setCurrentItem(msg.obj)
-//                }
-//                CONNECT_CALLBACK -> {
-//                    showShort(this@MainActivity, msg.obj)
-//                }
+                ADD_COMMAND ->{
+                    commandItemAdapter!!.addItem(msg.obj as Command)
+                    commandList!!.smoothScrollToPosition(commands.size)
+                }
+                REFRESH_COMMAND ->{
+                    commandItemAdapter!!.notifyDataSetChanged()
+                }
                 else -> {
                 }
             }
@@ -133,16 +145,14 @@ class MainActivity : AppCompatActivity() {
         @Nullable data: Intent?
     ) {
         if (data == null) return
-        if (resultCode != Activity.RESULT_OK) return
         when (requestCode) {
             REQUEST_BLUETOOTH -> {
+                if(resultCode != Activity.RESULT_OK) return
                 val name = data.getStringExtra("name")
                 val address = data.getStringExtra("address")
-                for(connected in connecteds){
-                    if(connected.address == address){
-                        handler.obtainMessage(SEND_TOAST, "设备已存在: ${connected.name}").sendToTarget()
-                        return
-                    }
+                connecteds.find { it.address == address }?.apply {
+                    handler.obtainMessage(SEND_TOAST, "设备已存在: ${this.name}").sendToTarget()
+                    return
                 }
                 connectedItemAdapter?.addItem(Connected(address!!, name!!, false))
                 btController!!.connect(this, address)
@@ -151,48 +161,24 @@ class MainActivity : AppCompatActivity() {
             EDIT_DEVICE ->{
                 val name = data.getStringExtra("name")
                 val address = data.getStringExtra("address")
-                selectName!!.text = name
-                for((num, connected) in connecteds.withIndex()){
-                    if(connected.address == address){
-                        connected.name = name!!
-                        handler.obtainMessage(UPDATE_CONNECTED, num).sendToTarget()
-                        return
+                address?.let {
+                    selectName!!.text = name
+                    connecteds.find { it.address == address }?.apply {
+                        val num = connecteds.indexOf(this)
+                        if(resultCode == Activity.RESULT_CANCELED){
+                            Thread(Runnable {
+                                dataService!!.deviceDao.delete(Device().apply { this.address = address})
+                            }).start()
+                            this.save = false
+                            devices.remove(address)
+                            handler.obtainMessage(UPDATE_CONNECTED, num).sendToTarget()
+                        }else{
+                            this.name = name!!
+                            handler.obtainMessage(UPDATE_CONNECTED, num).sendToTarget()
+                        }
                     }
                 }
             }
-//            REQUEST_MODE, REQUEST_COMMAND -> {
-//                val mode = data.getStringExtra("mode")
-//                Thread(Runnable {
-//                    val device: Device = deviceMap.get(SettingManager.SELECT_ADDRESS)
-//                    if (device != null) {
-//                        val record: Record<*> =
-//                            Record<Any?>()
-//                        record.setAddress(SettingManager.SELECT_ADDRESS)
-//                        record.setTime(CalendarUtil.getDate())
-//                        record.setFrom(String.valueOf(device.getMode()))
-//                        record.setTo(mode)
-//                        if (mode != null && mode != SettingManager.CLOSE_CODE) {
-//                            device.setMode(mode)
-//                            device.setOpen(true)
-//                            device.setStart(CalendarUtil.getDate())
-//                            device.setEnd(0)
-//                            record.setType("Change")
-//                            settingManager.setStringPreference("select_address", "none")
-//                            settingManager.setStringPreference(
-//                                "select_address",
-//                                device.getAddress()
-//                            )
-//                        } else {
-//                            device.setOpen(false)
-//                            device.setEnd(CalendarUtil.getDate())
-//                            record.setType("Close")
-//                            actionButton.setImageResource(R.drawable.animate_action)
-//                        }
-//                        dataManager.getRecordDao().insertAll(record)
-//                        dataManager.getDeviceDao().updateAll(device)
-//                    }
-//                }).start()
-//            }
             else -> {
             }
         }
@@ -209,19 +195,19 @@ class MainActivity : AppCompatActivity() {
         if (!bluetoothAdapter.isEnabled) bluetoothAdapter.enable()
         btController?.setStateCallback(object: ConnectStateCallback {
             override fun connectSucceed(deviceAddress: String){
-                for(connected in connecteds){
-                    if(connected.address != deviceAddress) continue
-                    connected.save = true
-                    handler.obtainMessage(SEND_TOAST, "成功连接: ${connected.name}").sendToTarget()
-                    handler.obtainMessage(SUCCEED_CONNECT, connected).sendToTarget()
-                    handler.obtainMessage(UPDATE_CONNECTED, connecteds.indexOf(connected)).sendToTarget()
+                connecteds.find{it.address == deviceAddress}?.apply {
+                    this.save = true
+                    handler.obtainMessage(SEND_TOAST, "成功连接: ${this.name}").sendToTarget()
+                    handler.obtainMessage(SUCCEED_CONNECT, this).sendToTarget()
+                    handler.obtainMessage(UPDATE_CONNECTED, connecteds.indexOf(this)).sendToTarget()
                     Thread(Runnable {
+                        val device: Device?
                         if(!devices.contains(deviceAddress)){
-                            val uuid: Array<String> = getUUID(connected.name)
-                            val device = Device(
+                            val uuid: Array<String> = getUUID(this.name)
+                            device = Device(
                                 deviceAddress,
-                                connected.name,
-                                connected.name,
+                                this.name,
+                                this.name,
                                 "",
                                 uuid[0],
                                 uuid[1],
@@ -230,34 +216,72 @@ class MainActivity : AppCompatActivity() {
                             )
                             dataService!!.deviceDao.insert(device)
                             devices.add(deviceAddress)
+                        }else{
+                            device = dataService!!.deviceDao.findByAddress(deviceAddress)
+                        }
+                        if(device.service != ""){
+                            btController!!.setCharacteristic(deviceAddress, device.service, device.characteristic)
+                        }
+                        commands.clear()
+                        dataService!!.commandDao.queryAll().filter { it.address == deviceAddress }.forEach{
+                            commands.add(it)
                         }
                     }).start()
-                    break
                 }
             }
 
             override fun connectLost(deviceAddress: String) {
-                for(connected in connecteds){
-                    if(connected.address != deviceAddress) continue
-                    handler.obtainMessage(SEND_TOAST, "连接丢失: ${connected.name}").sendToTarget()
-                    handler.obtainMessage(CLOSE_CONNECT, connected).sendToTarget()
-                    break
+                connecteds.find { it.address == deviceAddress }?.let {
+                    handler.obtainMessage(SEND_TOAST, "连接丢失: ${it.name}").sendToTarget()
+                    handler.obtainMessage(CLOSE_CONNECT, it).sendToTarget()
+                    if(deviceAddress == connectedAddress) commands.clear()
                 }
             }
         })
+        btController?.registerReceiveListener("mainActivity"
+        ) { value ->
+            var string = String(value!!)
+            if(string.endsWith("\r\n"))string = string.trimEnd('\r', '\n')
+            addData(string, "Receive", true)
+        }
     }
+
 
     private fun initData(){
         dataService = DataService.instance
 
         Thread(Runnable {
-            for(device in dataService!!.deviceDao.queryAll()){
+            dataService!!.deviceDao.queryAll().forEach {device ->
                 devices.add(device.address)
                 if(device.display!!){
                     connectedItemAdapter?.addItem(Connected(device.address, device.name!!, true))
                 }
             }
         }).start()
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        btController!!.setEnableHex(sharedPreferences!!.getBoolean("hex_convert", false))
+        btController!!.setEnableNotify(!sharedPreferences!!.getBoolean("cancel_notify", false))
+
+        listener = SharedPreferences.OnSharedPreferenceChangeListener{ sharedPreferences, key ->
+            val enable = sharedPreferences.getBoolean(key, false)
+            when(key){
+                "auto_connect" ->{
+
+                }
+                "hex_convert" ->{
+                    btController?.setEnableHex(enable)
+                }
+                "cancel_notify" ->{
+                    btController?.setEnableNotify(!enable)
+                }
+                else ->{
+                }
+            }
+        }
+
+        sharedPreferences!!.registerOnSharedPreferenceChangeListener(listener)
+
     }
 
     private fun initView(){
@@ -274,6 +298,21 @@ class MainActivity : AppCompatActivity() {
             adapter = connectedItemAdapter
         }
         connectedItemAdapter?.addItem(Connected("请扫描并添加设备", "暂无连接", false))
+
+        commandItemAdapter = CommandItemAdapter(commands)
+        commandList = findViewById<RecyclerView>(R.id.command_list).apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = commandItemAdapter
+            itemAnimator = FloatItemAnimator()
+            layoutAnimation = AnimationUtils.loadLayoutAnimation(this@MainActivity, R.anim.layout_animation_from_bottom)
+        }
+
+        commandSend = findViewById<TextView>(R.id.command_send).apply {
+            setOnClickListener {
+                val sendText: String = commandEdit!!.text.toString().trim()
+                sendCommand(sendText)
+            }
+        }
 
         selectName = findViewById(R.id.select_name)
         selectAddress = findViewById(R.id.select_address)
@@ -305,6 +344,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+//        selectClear = findViewById<ImageButton>(R.id.main_select_clear).apply {
+//            setOnClickListener {
+//                AnimateUtil.click(it, 100)
+//                commands.clear()
+//                handler.obtainMessage(REFRESH_COMMAND).sendToTarget()
+//                Thread(Runnable {
+//                    dataService!!.commandDao.queryAll().filter { command ->  command.address == connectedAddress }.forEach {c ->
+//                        dataService!!.commandDao.delete(c)
+//                    }
+//                }).start()
+//            }
+//        }
 
         commandMore = findViewById<ImageButton>(R.id.command_more).apply {
             setOnClickListener {
@@ -317,10 +368,8 @@ class MainActivity : AppCompatActivity() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (s!!.isNotEmpty()) {
-                        println("scene_command_edit")
                         commandMotion!!.transitionToState(R.id.scene_command_edit)
                     } else {
-                        println("scene_command_none")
                         commandMotion!!.transitionToState(R.id.scene_command_none)
                     }
                 }
@@ -343,14 +392,62 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onDestroy() {
+        sharedPreferences!!.unregisterOnSharedPreferenceChangeListener(listener)
+        super.onDestroy()
+    }
+
+    /**
+     * 发送蓝牙指令
+     * @param command 指令
+     */
+    private fun sendCommand(command: String) {
+        val bytes = command.toByteArray()
+        commandEdit!!.setText("")
+        btController!!.writeBuffer(connectedAddress, bytes, object : OnWriteCallback {
+            override fun onSuccess() {
+                addData(command, "Send", true)
+            }
+
+            override fun onFailed(state: Int) {
+                ToastUtil.showShort(baseContext, "发送失败")
+                addData(command, "Send", false)
+            }
+        })
+    }
+
+    /**
+     * 添加指令数据
+     * @param command 指令
+     * @param type 类型
+     * @param success 是否成功
+     */
+    private fun addData(
+        command: String,
+        type: String,
+        success: Boolean
+    ) {
+        Thread(Runnable {
+            if (CalendarUtil.getDate() - lastTime > 180000L) {
+                val time = Command(text = "#", type = "System", time = CalendarUtil.getDate(), isSuccess = true, address = connectedAddress)
+                dataService!!.commandDao.insertAll(time)
+                handler.obtainMessage(ADD_COMMAND, time).sendToTarget()
+            }
+            lastTime = CalendarUtil.getDate()
+            val data = Command(text = command, type = type, time = CalendarUtil.getDate(), isSuccess = success, address = connectedAddress)
+            dataService!!.commandDao.insertAll(data)
+            handler.obtainMessage(ADD_COMMAND, data).sendToTarget()
+        }).start()
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         this.menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onBackPressed() {
-        if(connectedMotion!!.currentState != R.id.connected_scene_top){
-            connectedMotion!!.transitionToState(R.id.connected_scene_top)
+        if(connectedMotion!!.currentState != R.id.connected_scene_start){
+            connectedMotion!!.transitionToState(R.id.connected_scene_start)
             return
         }
         super.onBackPressed()

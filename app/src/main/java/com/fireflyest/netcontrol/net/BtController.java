@@ -23,14 +23,18 @@ public interface BtController {
 
     void closeConnect(String address);
 
-    boolean isConnected(String address);
-
-    List<BluetoothDevice> getDeviceList();
-
     BluetoothGatt getGatt(String address);
 
     void registerReceiveListener(String requestKey, OnReceiverCallback onReceiverCallback);
 
     void unregisterReceiveListener(String requestKey);
+
+    void enableNotify(String address);
+
+    void setEnableNotify(boolean enable);
+
+    void setCharacteristic(String address, String service, String characteristic);
+
+    void setEnableHex(boolean enable);
 
 }

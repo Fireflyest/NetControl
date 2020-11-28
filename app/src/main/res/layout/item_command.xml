@@ -113,7 +113,6 @@
         android:textSize="12sp"
         android:layout_gravity="center"
         android:paddingHorizontal="12dp"
-        android:textStyle="bold"
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

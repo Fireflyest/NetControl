@@ -117,7 +117,7 @@ public class BleController implements BtController {
             characteristic.setValue(bytesToHexString(buf));
             Log.e(LOG_TAG, "发送数据 -> " +bytesToHexString(buf));
         }else {
-            bytesToHexString(buf);
+            characteristic.setValue(buf);
             Log.e(LOG_TAG, "发送数据 -> " +Arrays.toString(buf));
         }
 
@@ -258,7 +258,7 @@ public class BleController implements BtController {
             if(enableNotify){
                 for(BluetoothGattService service : gatt.getServices()){
                     for(BluetoothGattCharacteristic  characteristic: service.getCharacteristics()){
-                        if((characteristic.getProperties() & 0x10) == 0)continue;
+                        if((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) == 0)continue;
                         if (gatt.setCharacteristicNotification(characteristic, true)){
                             BluetoothGattDescriptor clientConfig = characteristic.getDescriptor(BLUETOOTH_NOTIFY_D);
                             if (clientConfig == null) continue;

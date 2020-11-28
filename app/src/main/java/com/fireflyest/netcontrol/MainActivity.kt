@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity() {
         const val EDIT_DEVICE = 11
         const val ADD_COMMAND = 12
         const val REFRESH_COMMAND = 13
+        const val CLEAR_COMMAND = 14
     }
 
     private val handler: Handler = Handler(Handler.Callback { msg ->
@@ -121,6 +122,13 @@ class MainActivity : AppCompatActivity() {
                 }
                 REFRESH_COMMAND ->{
                     commandItemAdapter!!.notifyDataSetChanged()
+                }
+                CLEAR_COMMAND ->{
+                    System.out.println(commands.size)
+                    commands.clear()
+                    System.out.println(commands.size)
+                    commandItemAdapter!!.notifyDataSetChanged()
+
                 }
                 else -> {
                 }
@@ -344,18 +352,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-//        selectClear = findViewById<ImageButton>(R.id.main_select_clear).apply {
-//            setOnClickListener {
-//                AnimateUtil.click(it, 100)
-//                commands.clear()
-//                handler.obtainMessage(REFRESH_COMMAND).sendToTarget()
-//                Thread(Runnable {
-//                    dataService!!.commandDao.queryAll().filter { command ->  command.address == connectedAddress }.forEach {c ->
-//                        dataService!!.commandDao.delete(c)
-//                    }
-//                }).start()
-//            }
-//        }
+        selectClear = findViewById<ImageButton>(R.id.main_select_clear).apply {
+            setOnClickListener {
+                AnimateUtil.click(it, 100)
+                commands.clear()
+                this@MainActivity.handler.sendEmptyMessage(REFRESH_COMMAND)
+                Thread(Runnable {
+                    dataService!!.commandDao.queryAll().filter { command ->  command.address == connectedAddress }.forEach {c ->
+                        dataService!!.commandDao.delete(c)
+                    }
+                }).start()
+            }
+        }
 
         commandMore = findViewById<ImageButton>(R.id.command_more).apply {
             setOnClickListener {

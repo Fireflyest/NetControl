@@ -1,6 +1,5 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -11,11 +10,48 @@
         <item name="background">@color/colorBackground</item>
         <item name="customColorValue">@color/colorForeground</item>
         <item name="titleTextColor">@color/colorText</item>
+        <item name="subtitleTextColor">@color/colorIcon</item>
+        <item name="colorSurface">@color/colorPrimary</item>
+        <item name="colorSwitchThumbNormal">@color/colorBackground</item>
+        <item name="itemTextColor">@color/colorItemText</item>
+        <item name="placeholderTextColor">@color/colorTextLight</item>
+        <item name="editTextColor">@color/colorTextLight</item>
+
         <item name="android:statusBarColor">@android:color/transparent</item>
 
-        <!-- specify enter and exit transitions -->
         <item name="android:windowEnterTransition">@transition/change</item>
         <item name="android:windowExitTransition">@transition/change</item>
+
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/share_change</item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/share_change</item>
+    </style>
+
+    <style name="AppDarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@color/colorRippleDark</item>
+        <item name="colorError">@color/colorRed</item>
+        <item name="background">@color/colorBackgroundDark</item>
+        <item name="customColorValue">@color/colorForegroundDark</item>
+        <item name="titleTextColor">@color/colorTextLight</item>
+        <item name="subtitleTextColor">@color/colorIconLight</item>
+        <item name="colorSurface">@color/colorAccent</item>
+        <item name="colorSwitchThumbNormal">@color/colorBackgroundDark</item>
+        <item name="itemTextColor">@color/colorItemTextLight</item>
+        <item name="placeholderTextColor">@color/colorTextLight</item>
+        <item name="editTextColor">@color/colorTextLight</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition">@transition/change_in</item>
+        <item name="android:windowExitTransition">@transition/change_out</item>
 
         <!-- specify shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">
@@ -23,7 +59,6 @@
         <item name="android:windowSharedElementExitTransition">
             @transition/share_change</item>
     </style>
-
 
     <style name="button_primary_style">
         <item name="android:textColor">?attr/customColorValue</item>
@@ -51,20 +86,20 @@
     </style>
 
     <style name="text_bold">
-        <item name="android:textColor">@color/colorIcon</item>
+        <item name="android:textColor">?attr/subtitleTextColor</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="text_emphasis">
-        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textColor">?attr/titleTextColor</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textScaleX">1</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="text_max">
-        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textColor">?attr/titleTextColor</item>
         <item name="android:textSize">64sp</item>
         <item name="android:textScaleX">1.1</item>
         <item name="android:typeface">monospace</item>

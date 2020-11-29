@@ -7,18 +7,18 @@
       android:pathData="M14,24L32,24"
       android:strokeWidth="1.8"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"
+      android:strokeColor="?attr/subtitleTextColor"
       android:strokeLineCap="round"/>
   <path
       android:pathData="M14,30L27.5,30"
       android:strokeWidth="1.8"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"
+      android:strokeColor="?attr/subtitleTextColor"
       android:strokeLineCap="round"/>
   <path
       android:pathData="M14,18L22.5,18"
       android:strokeWidth="1.8"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"
+      android:strokeColor="?attr/subtitleTextColor"
       android:strokeLineCap="round"/>
 </vector>

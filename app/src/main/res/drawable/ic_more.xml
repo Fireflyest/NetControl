@@ -7,15 +7,15 @@
       android:pathData="M24,24m-13,0a13,13 0,1 1,26 0a13,13 0,1 1,-26 0"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"/>
+      android:strokeColor="?attr/subtitleTextColor"/>
   <path
       android:pathData="M17,24L31,24"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"/>
+      android:strokeColor="?attr/subtitleTextColor"/>
   <path
       android:pathData="M24,17L24,31"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"/>
+      android:strokeColor="?attr/subtitleTextColor"/>
 </vector>

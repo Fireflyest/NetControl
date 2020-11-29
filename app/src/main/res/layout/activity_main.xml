@@ -179,6 +179,24 @@
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
 
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/quick_motion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layoutDescription="@xml/quick_scene">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/quick_box"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/round_background"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.motion.widget.MotionLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -186,6 +204,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="?attr/customColorValue"
         app:menu="@menu/menu_left"
         app:headerLayout="@layout/layout_left_header"/>
 

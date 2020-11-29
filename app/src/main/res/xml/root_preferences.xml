@@ -4,25 +4,25 @@
         app:icon="@drawable/ic_setting"
         app:title="Setting">
 
+<!--        app:summaryOff="开启设备自动连接"-->
+<!--        app:summaryOn="应用启用时尝试连接蓝牙"-->
         <SwitchPreferenceCompat
             app:key="auto_connect"
             app:title="自动连接"
-            app:summaryOff="开启设备自动连接"
-            app:summaryOn="应用启用时尝试连接蓝牙"
             app:defaultValue="false" />
 
+<!--        app:summaryOff="开启指令十六进制转换"-->
+<!--        app:summaryOn="发送的指令转换为十六进制"-->
         <SwitchPreferenceCompat
             app:key="hex_convert"
             app:title="进制转换"
-            app:summaryOff="开启指令十六进制转换"
-            app:summaryOn="发送的指令转换为十六进制"
             app:defaultValue="false" />
 
+<!--        app:summaryOff="不接收设备返回信息"-->
+<!--        app:summaryOn="发送指令后不会收到反馈"-->
         <SwitchPreferenceCompat
             app:key="cancel_notify"
-            app:title="取消反馈"
-            app:summaryOff="不接收设备返回信息"
-            app:summaryOn="发送指令后不会收到反馈"
+            app:title="取消回馈"
             app:defaultValue="false" />
 
 <!--        <SwitchPreferenceCompat-->
@@ -64,20 +64,18 @@
 
         <Preference
             app:key="feedback"
-            app:title="反馈"
-            app:summary="提交错误或提供建议">
+            app:title="反馈">
 <!--            <intent-->
 <!--                android:targetPackage="com.fireflyest.btcontrol"-->
-<!--                android:targetClass="com.fireflyest.btcontrol.FeedbackActivity"/>-->
+<!--                android:targetClass="com.fireflyest.netcontrol.FeedbackActivity"/>-->
         </Preference>
 
         <Preference
             app:key="version"
-            app:title="关于"
-            app:summary="@string/app_version">
+            app:title="关于">
 <!--            <intent-->
 <!--                android:targetPackage="com.fireflyest.btcontrol"-->
-<!--                android:targetClass="com.fireflyest.btcontrol.VersionActivity"/>-->
+<!--                android:targetClass="com.fireflyest.netcontrol.VersionActivity"/>-->
         </Preference>
 
     </PreferenceCategory>

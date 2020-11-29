@@ -2,8 +2,8 @@ package com.fireflyest.netcontrol
 
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
@@ -17,15 +17,16 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fireflyest.netcontrol.adapter.charsList.CharsItemAdapter
+import com.fireflyest.netcontrol.anim.FloatItemAnimator
 import com.fireflyest.netcontrol.bean.Chars
 import com.fireflyest.netcontrol.bean.Device
 import com.fireflyest.netcontrol.data.DataService
-import com.fireflyest.netcontrol.net.BtController
 import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.util.AnimateUtil
 import com.fireflyest.netcontrol.util.CalendarUtil
@@ -96,6 +97,7 @@ class DeviceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_device)
 
         this.initData()
@@ -104,6 +106,7 @@ class DeviceActivity : AppCompatActivity() {
     }
 
     private fun initView(){
+
         StatusBarUtil.StatusBarLightMode(this)
 
         val toolbar: Toolbar = findViewById<Toolbar>(R.id.toolbar_sub).apply { title="" }
@@ -184,6 +187,7 @@ class DeviceActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@DeviceActivity)
             adapter = charsItemAdapter
             layoutAnimation = AnimationUtils.loadLayoutAnimation(this@DeviceActivity, R.anim.layout_animation_from_bottom)
+            itemAnimator = FloatItemAnimator()
         }
 
         deviceMotion = findViewById(R.id.device_motion)
@@ -238,7 +242,7 @@ class DeviceActivity : AppCompatActivity() {
                 )
                 val left: String =
                     if(device?.service == service.uuid.toString() && device?.characteristic == characteristic.uuid.toString())
-                        "▶" else "▷"
+                        "▣" else "□"
                 charss.add(
                     Chars(left, String.format("%s", characteristic.uuid), 1, false, service.uuid.toString())
                 )

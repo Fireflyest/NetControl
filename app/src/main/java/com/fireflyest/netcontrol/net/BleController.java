@@ -123,8 +123,9 @@ public class BleController implements BtController {
 
         BluetoothGatt gatt = gattMap.get(address);
         if (gatt != null) {
-            boolean b = gatt.writeCharacteristic(characteristic);
-            Log.e(LOG_TAG, "发送 -> " + (b ? "成功":"失败"));
+            boolean success = gatt.writeCharacteristic(characteristic);
+            if(!success) writeCallback.onFailed(OnWriteCallback.FAILED_OPERATION);
+            Log.e(LOG_TAG, "发送结果 -> " + (success ? "成功":"失败"));
         }
 
     }
@@ -258,13 +259,28 @@ public class BleController implements BtController {
             if(enableNotify){
                 for(BluetoothGattService service : gatt.getServices()){
                     for(BluetoothGattCharacteristic  characteristic: service.getCharacteristics()){
-                        if((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) == 0)continue;
-                        if (gatt.setCharacteristicNotification(characteristic, true)){
-                            BluetoothGattDescriptor clientConfig = characteristic.getDescriptor(BLUETOOTH_NOTIFY_D);
-                            if (clientConfig == null) continue;
-                            clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-                            gatt.writeDescriptor(clientConfig);
+                        if((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0){
+                            if (gatt.setCharacteristicNotification(characteristic, true)){
+                                BluetoothGattDescriptor clientConfig = characteristic.getDescriptor(BLUETOOTH_NOTIFY_D);
+                                if (clientConfig == null) continue;
+                                clientConfig.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
+                                gatt.writeDescriptor(clientConfig);
+                            }
                         }
+//                        if((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0){
+//                            final OnReceiverCallback callback = receiverRequestQueue.get("mainActivity");
+//                            if(callback == null)return;
+//                            final String data = characteristic.getFloatValue()
+//                            System.out.println("out -> " + data);
+//                            if(data != null){
+//                                runOnMainThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        callback.onReceive(data.getBytes());
+//                                    }
+//                                });
+//                            }
+//                        }
                     }
                 }
             }

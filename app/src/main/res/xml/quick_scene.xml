@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ConstraintSet android:id="@+id/quick_scene_start">
+        <Constraint
+            android:id="@+id/quick_box" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/quick_scene_end">
+        <Constraint
+            android:id="@id/quick_box"
+            android:layout_height="500dp"
+            android:layout_width="match_parent" />
+    </ConstraintSet>
+
+    <Transition
+        app:constraintSetEnd="@id/quick_scene_end"
+        app:constraintSetStart="@+id/quick_scene_start" />
+</MotionScene>

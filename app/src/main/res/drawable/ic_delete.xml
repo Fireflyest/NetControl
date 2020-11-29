@@ -5,26 +5,26 @@
     android:viewportHeight="48">
   <path
       android:pathData="M18.77,19H29.23a0,0 0,0 1,0 0V29.38a2,2 0,0 1,-2 2H20.77a2,2 0,0 1,-2 -2V19A0,0 0,0 1,18.77 19Z"
-      android:fillColor="#3d4446"/>
+      android:fillColor="?attr/subtitleTextColor"/>
   <path
       android:pathData="M29.71,20.43H18.29a1,1 0,0 1,0 -1.9H29.71a1,1 0,0 1,0 1.9Z"
-      android:fillColor="#3d4446"/>
+      android:fillColor="?attr/subtitleTextColor"/>
   <path
       android:pathData="M22.1,16.63L25.9,16.63"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"
+      android:strokeColor="?attr/subtitleTextColor"
       android:strokeLineCap="round"/>
   <path
       android:pathData="M22.1,20.43L22.1,16.63"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"
+      android:strokeColor="?attr/subtitleTextColor"
       android:strokeLineCap="round"/>
   <path
       android:pathData="M25.9,20.43L25.9,16.63"
       android:strokeWidth="2"
       android:fillColor="#00000000"
-      android:strokeColor="#3d4446"
+      android:strokeColor="?attr/subtitleTextColor"
       android:strokeLineCap="round"/>
 </vector>

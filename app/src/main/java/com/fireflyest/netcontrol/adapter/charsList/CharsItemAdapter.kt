@@ -38,13 +38,11 @@ class CharsItemAdapter(private var charss: MutableList<Chars>, private var handl
         val chars: Chars = charss[position]
         when(chars.level){
             0 -> {
-                holder.left.setTextColor(Color.WHITE)
-                holder.right.setTextColor(Color.WHITE)
-                holder.itemView.setBackgroundResource(R.color.colorPrimary)
+                holder.itemView.setBackgroundResource(R.color.colorAccent)
             }
             1 -> {
-                holder.left.setTextColor(Color.parseColor("#1A237E"))
-                holder.right.setTextColor(Color.parseColor("#1A237E"))
+                holder.left.setTextColor(Color.parseColor("#2F3C55"))
+                holder.right.setTextColor(Color.parseColor("#2F3C55"))
                 if(!chars.title){
                     holder.line.visibility = View.VISIBLE
                     holder.itemView.setOnClickListener {

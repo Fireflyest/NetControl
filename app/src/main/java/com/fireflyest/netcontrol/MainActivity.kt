@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
     private var connectedMotion: MotionLayout? = null
     private var controlMotion: MotionLayout? = null
     private var commandMotion: MotionLayout? = null
+    private var quickMotion: MotionLayout? = null
     private var selectClose: ImageButton? = null
     private var selectEdit: ImageButton? = null
     private var selectClear: ImageButton? = null
@@ -327,6 +328,7 @@ class MainActivity : AppCompatActivity() {
         connectedMotion = findViewById(R.id.main_connected_box)
         controlMotion = findViewById(R.id.main_control_box)
         commandMotion = findViewById(R.id.main_command_box)
+        quickMotion = findViewById(R.id.quick_motion)
 
         selectClose = findViewById<ImageButton>(R.id.main_select_close).apply {
             setOnClickListener {
@@ -368,6 +370,7 @@ class MainActivity : AppCompatActivity() {
         commandMore = findViewById<ImageButton>(R.id.command_more).apply {
             setOnClickListener {
                 AnimateUtil.click(it, 100)
+                quickMotion!!.transitionToState(R.id.quick_scene_end)
             }
         }
         commandEdit = findViewById<EditText>(R.id.command_edit).apply {

@@ -15,6 +15,7 @@
 
         <include layout="@layout/toolbar_main"/>
 
+<!--        设备列表 拉杆-->
         <androidx.constraintlayout.motion.widget.MotionLayout
             android:id="@+id/main_connected_box"
             android:layout_width="match_parent"
@@ -45,6 +46,7 @@
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
 
+<!--        已连接设备 控制按钮-->
         <androidx.constraintlayout.motion.widget.MotionLayout
             android:id="@+id/main_control_box"
             android:layout_width="match_parent"
@@ -122,6 +124,7 @@
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
 
+<!--        指令列表-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/command_list"
             android:layout_width="match_parent"
@@ -131,6 +134,78 @@
             app:layout_constraintTop_toBottomOf="@+id/main_control_box"
             app:layout_constraintBottom_toTopOf="@+id/main_command_box"/>
 
+<!--        快捷指令-->
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/quick_motion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutDescription="@xml/quick_scene"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <View
+                android:id="@+id/quick_shade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0.0"
+                android:background="@drawable/background_shade"
+                app:layout_constraintTop_toBottomOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/quick_box"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/top_round_white"
+                app:layout_constraintTop_toTopOf="@+id/quick_shade">
+
+                <TextView
+                    android:id="@+id/quick_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginTop="22dp"
+                    android:text="@string/quick_text"
+                    android:theme="@style/text_bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/quick_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_down"
+                    android:src="@drawable/ic_down"
+                    app:layout_constraintBottom_toBottomOf="@+id/quick_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/quick_text" />
+
+                <ImageButton
+                    android:id="@+id/quick_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_add"
+                    android:src="@drawable/ic_add"
+                    app:layout_constraintBottom_toBottomOf="@+id/quick_text"
+                    app:layout_constraintEnd_toStartOf="@+id/quick_down"
+                    app:layout_constraintTop_toTopOf="@+id/quick_text" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/quick_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="22dp"
+                    android:overScrollMode="never"
+                    app:layout_constraintTop_toBottomOf="@+id/quick_text" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.motion.widget.MotionLayout>
+
+<!--        输入框-->
         <androidx.constraintlayout.motion.widget.MotionLayout
             android:id="@+id/main_command_box"
             android:layout_width="match_parent"
@@ -176,24 +251,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:contentDescription="@string/app_more" />
-
-        </androidx.constraintlayout.motion.widget.MotionLayout>
-
-        <androidx.constraintlayout.motion.widget.MotionLayout
-            android:id="@+id/quick_motion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layoutDescription="@xml/quick_scene">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/quick_box"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@drawable/round_background"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
 

@@ -14,11 +14,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppLightTheme">
-        <activity android:name=".DeviceActivity"/>
-        <activity android:name=".MainActivity"
-            android:launchMode="singleTop"/>
-        <activity android:name=".ScanActivity" />
-        <activity android:name=".LaunchActivity">
+        <activity
+            android:name=".DeviceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ScanActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LaunchActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

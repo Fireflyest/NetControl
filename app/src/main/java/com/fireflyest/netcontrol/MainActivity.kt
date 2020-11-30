@@ -1,5 +1,6 @@
 package com.fireflyest.netcontrol
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.bluetooth.BluetoothAdapter
@@ -10,16 +11,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.Nullable
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -29,12 +28,16 @@ import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.fireflyest.netcontrol.adapter.commandList.CommandItemAdapter
 import com.fireflyest.netcontrol.adapter.connectedList.ConnectedItemAdapter
+import com.fireflyest.netcontrol.adapter.quickList.QuickItemAdapter
 import com.fireflyest.netcontrol.anim.FloatItemAnimator
+import com.fireflyest.netcontrol.anim.RightItemAnimator
 import com.fireflyest.netcontrol.bean.Command
 import com.fireflyest.netcontrol.bean.Connected
 import com.fireflyest.netcontrol.bean.Device
+import com.fireflyest.netcontrol.bean.Quick
 import com.fireflyest.netcontrol.data.DataService
 import com.fireflyest.netcontrol.net.BtController
 import com.fireflyest.netcontrol.net.BtManager
@@ -53,9 +56,11 @@ class MainActivity : AppCompatActivity() {
     private val connecteds: MutableList<Connected> = ArrayList()
     private val commands: MutableList<Command> = ArrayList()
     private val devices: MutableList<String> = ArrayList()
+    private val quicks: MutableList<Quick> = ArrayList()
 
     private var connectedItemAdapter: ConnectedItemAdapter? = null
     private var commandItemAdapter: CommandItemAdapter? = null
+    private var quickItemAdapter: QuickItemAdapter? = null
     private var btController: BtController? = null
     private var dataService: DataService? = null
     private var sharedPreferences: SharedPreferences? =null
@@ -74,6 +79,11 @@ class MainActivity : AppCompatActivity() {
     private var commandEdit: EditText? = null
     private var commandSend: TextView? = null
     private var commandList: RecyclerView? = null
+    private var quickShade: View? = null
+    private var quickList: RecyclerView? = null
+    private var quickDown: ImageButton? = null
+    private var quickAdd: ImageButton? = null
+
 
     private var connectedAddress: String? = null
     private var lastTime: Long = 0
@@ -89,7 +99,8 @@ class MainActivity : AppCompatActivity() {
         const val EDIT_DEVICE = 11
         const val ADD_COMMAND = 12
         const val REFRESH_COMMAND = 13
-        const val CLEAR_COMMAND = 14
+        const val SEND_QUICK = 14
+        const val DELETE_QUICK = 15
     }
 
     private val handler: Handler = Handler(Handler.Callback { msg ->
@@ -124,12 +135,14 @@ class MainActivity : AppCompatActivity() {
                 REFRESH_COMMAND ->{
                     commandItemAdapter!!.notifyDataSetChanged()
                 }
-                CLEAR_COMMAND ->{
-                    System.out.println(commands.size)
-                    commands.clear()
-                    System.out.println(commands.size)
-                    commandItemAdapter!!.notifyDataSetChanged()
-
+                SEND_QUICK ->{
+                    quickMotion!!.transitionToState(R.id.quick_scene_start)
+                    (msg.obj as Quick).command?.let { this.sendCommand(it) }
+                }
+                DELETE_QUICK ->{
+                    val quick = msg.obj as Quick
+                    quicks.remove(quick)
+                    quickItemAdapter!!.notifyDataSetChanged()
                 }
                 else -> {
                 }
@@ -266,6 +279,9 @@ class MainActivity : AppCompatActivity() {
                     connectedItemAdapter?.addItem(Connected(device.address, device.name!!, true))
                 }
             }
+            dataService!!.quickDao.queryAll().forEach {quick ->
+                quicks.add(quick)
+            }
         }).start()
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -293,6 +309,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("InflateParams")
     private fun initView(){
         StatusBarUtil.StatusBarLightMode(this)
 
@@ -300,6 +317,15 @@ class MainActivity : AppCompatActivity() {
         this.setSupportActionBar(toolbar)
 
         drawerLayout = findViewById(R.id.main_drawer)
+//        findViewById<NavigationView>(R.id.left_navigation).apply {
+//            getHeaderView(0).apply {
+//                val settingsFragment = SettingsFragment()
+//                supportFragmentManager
+//                    .beginTransaction()
+//                    .replace(R.id.setting_container, settingsFragment as Fragment)
+//                    .commit()
+//            }
+//        }
 
         connectedItemAdapter = ConnectedItemAdapter(connecteds , handler)
         findViewById<RecyclerView>(R.id.main_connected_list).apply {
@@ -370,6 +396,7 @@ class MainActivity : AppCompatActivity() {
         commandMore = findViewById<ImageButton>(R.id.command_more).apply {
             setOnClickListener {
                 AnimateUtil.click(it, 100)
+                connectedMotion!!.transitionToState(R.id.connected_scene_top)
                 quickMotion!!.transitionToState(R.id.quick_scene_end)
             }
         }
@@ -385,6 +412,60 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             })
+            setOnFocusChangeListener{ _, focus ->
+                if(focus && quickMotion!!.currentState != R.id.quick_scene_start){
+                    quickMotion!!.transitionToState(R.id.quick_scene_start)
+                }
+            }
+        }
+
+        quickShade = findViewById<View>(R.id.quick_shade).apply {
+            setOnClickListener{
+                quickMotion!!.transitionToState(R.id.quick_scene_start)
+            }
+        }
+
+        quickItemAdapter = QuickItemAdapter(quicks, handler)
+        quickList = findViewById<RecyclerView>(R.id.quick_list).apply {
+            layoutManager = StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.HORIZONTAL)
+            adapter = quickItemAdapter
+            itemAnimator = RightItemAnimator()
+        }
+        quickDown = findViewById<ImageButton>(R.id.quick_down).apply {
+            setOnClickListener{
+                AnimateUtil.click(it, 100)
+                quickMotion!!.transitionToState(R.id.quick_scene_start)
+            }
+        }
+
+        quickAdd = findViewById<ImageButton>(R.id.quick_add).apply {
+            setOnClickListener{
+                AnimateUtil.click(it, 100)
+                val quickEditBox = LayoutInflater.from(this@MainActivity)
+                    .inflate(R.layout.dialog_quick_add,null)
+                AlertDialog.Builder(this@MainActivity).apply {
+                    setMessage("请输入指令")
+                    setTitle("添加快捷指令")
+                    setView(quickEditBox)
+                    setPositiveButton(R.string.app_done
+                    ) { dialog, _ ->
+                        quickEditBox.findViewById<EditText>(R.id.quick_add_edit).apply {
+                            val quick = Quick(0, text.toString(), false)
+                            quicks.add(quick)
+                            Thread(Runnable {
+                                dataService!!.quickDao.insertAll(quick)
+                            }).start()
+                        }
+                        dialog.dismiss()
+                    }
+                    setNegativeButton(R.string.app_cancel
+                    ) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                    create()
+                    show()
+                }
+            }
         }
 
     }
@@ -457,6 +538,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        if(quickMotion!!.currentState != R.id.quick_scene_start){
+            quickMotion!!.transitionToState(R.id.quick_scene_start)
+            return
+        }
         if(connectedMotion!!.currentState != R.id.connected_scene_start){
             connectedMotion!!.transitionToState(R.id.connected_scene_start)
             return

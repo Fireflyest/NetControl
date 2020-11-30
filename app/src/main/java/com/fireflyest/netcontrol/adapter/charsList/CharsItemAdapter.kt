@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fireflyest.netcontrol.DeviceActivity
 import com.fireflyest.netcontrol.R
 import com.fireflyest.netcontrol.bean.Chars
-import com.fireflyest.netcontrol.net.BtManager
 
 
 class CharsItemAdapter(private var charss: MutableList<Chars>, private var handler: Handler) :

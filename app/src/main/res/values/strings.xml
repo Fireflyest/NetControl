@@ -12,6 +12,7 @@
     <string name="app_display">展示</string>
     <string name="app_cancel">取消</string>
     <string name="app_clear">清除</string>
+    <string name="app_down">下</string>
 
     <string name="menu_device">设备</string>
     <string name="menu_setting">设置</string>
@@ -29,5 +30,6 @@
 
     <string name="device_time">创建于: </string>
 
+    <string name="quick_text">快捷指令</string>
 
 </resources>

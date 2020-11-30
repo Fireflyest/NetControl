@@ -25,13 +25,12 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/connected_scene_top">
-        <Constraint android:id="@id/main_connected_list">
-            <Layout
-                android:layout_width="320dp"
-                android:layout_height="108dp"
-                android:layout_marginBottom="80dp"
-                motion:layout_constraintBottom_toTopOf="parent"/>
-        </Constraint>
+        <Constraint android:id="@id/main_connected_list"
+            android:alpha="0.0"
+            android:layout_width="320dp"
+            android:layout_height="108dp"
+            android:layout_marginBottom="80dp"
+            motion:layout_constraintBottom_toTopOf="parent"/>
         <Constraint android:id="@id/main_connected_tool">
             <Layout
                 android:layout_width="0dp"

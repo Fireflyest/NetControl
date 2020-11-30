@@ -27,10 +27,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        app:layout_constraintTop_toBottomOf="@+id/layout_left_header_box"
+        android:id="@+id/setting_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:name="com.fireflyest.netcontrol.ui.SettingsFragment"
-        android:id="@+id/setting_container"/>
+        app:layout_constraintTop_toBottomOf="@+id/layout_left_header_box"
+        android:name="com.fireflyest.netcontrol.ui.SettingsFragment" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

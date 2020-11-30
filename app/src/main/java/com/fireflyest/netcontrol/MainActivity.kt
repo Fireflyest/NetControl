@@ -317,15 +317,6 @@ class MainActivity : AppCompatActivity() {
         this.setSupportActionBar(toolbar)
 
         drawerLayout = findViewById(R.id.main_drawer)
-//        findViewById<NavigationView>(R.id.left_navigation).apply {
-//            getHeaderView(0).apply {
-//                val settingsFragment = SettingsFragment()
-//                supportFragmentManager
-//                    .beginTransaction()
-//                    .replace(R.id.setting_container, settingsFragment as Fragment)
-//                    .commit()
-//            }
-//        }
 
         connectedItemAdapter = ConnectedItemAdapter(connecteds , handler)
         findViewById<RecyclerView>(R.id.main_connected_list).apply {

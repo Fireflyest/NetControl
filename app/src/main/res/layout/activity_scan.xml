@@ -22,14 +22,14 @@
             android:id="@+id/scan_save_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="180dp"
+            android:minHeight="148dp"
             android:background="@drawable/round_white"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/scan_save_list"
-            android:layout_width="350dp"
+            android:layout_width="352dp"
             android:layout_height="0dp"
             android:layout_marginTop="40dp"
             android:overScrollMode="never"

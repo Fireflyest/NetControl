@@ -10,10 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -225,27 +222,51 @@ class DeviceActivity : AppCompatActivity() {
 
     private fun refreshService(){
         val gatt = BtManager.getBtController().getGatt(device!!.address)
-        for (service in gatt.services) {
+        gatt?.let {
+            for (service in gatt.services) {
+                charss.add(
+                    Chars(
+                        "服务",
+                        String.format("%s", service.uuid),
+                        0, true, service.uuid.toString())
+                )
+                for (characteristic in service.characteristics) {
+                    charss.add(
+                        Chars("特征 0x%s".format(Integer.toHexString(characteristic.properties)),
+                            "[%s]".format(getProprty(characteristic.properties)),
+                            1, true, service.uuid.toString())
+                    )
+                    val left: String =
+                        if(device?.service == service.uuid.toString() && device?.characteristic == characteristic.uuid.toString())
+                            "▣" else "□"
+                    charss.add(
+                        Chars(left, String.format("%s", characteristic.uuid), 1, false, service.uuid.toString())
+                    )
+                }
+                charss.add(Chars(" ", "", 4, true, ""))
+            }
+        }
+        if(charss.size == 0){
+            findViewById<TextView>(R.id.device_connect).apply {
+                visibility = View.VISIBLE
+                setOnClickListener{
+                    back(Activity.RESULT_OK)
+                }
+            }
             charss.add(
                 Chars(
                     "服务",
-                    String.format("%s", service.uuid),
-                    0, true, service.uuid.toString())
+                    String.format("%s", device!!.service),
+                    0, true, device!!.service!!)
             )
-            for (characteristic in service.characteristics) {
-                charss.add(
-                    Chars("特征 0x%s".format(Integer.toHexString(characteristic.properties)),
-                        "[%s]".format(getProprty(characteristic.properties)),
-                        1, true, service.uuid.toString())
-                )
-                val left: String =
-                    if(device?.service == service.uuid.toString() && device?.characteristic == characteristic.uuid.toString())
-                        "▣" else "□"
-                charss.add(
-                    Chars(left, String.format("%s", characteristic.uuid), 1, false, service.uuid.toString())
-                )
-            }
-            charss.add(Chars(" ", "", 4, true, ""))
+            charss.add(
+                Chars("特征 0x%s".format(""),
+                    "[%s]".format(" "),
+                    1, true, device!!.service!!)
+            )
+            charss.add(
+                Chars("▣", String.format("%s", device!!.characteristic), 1, false, device!!.service!!)
+            )
         }
     }
 

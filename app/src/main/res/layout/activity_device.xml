@@ -157,14 +157,29 @@
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 
+    <TextView
+        android:id="@+id/device_connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/device_motion"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:paddingVertical="12dp"
+        android:background="@drawable/round_white"
+        android:text="@string/scan_connect"
+        android:theme="@style/text_bold" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/device_char_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:overScrollMode="never"
         android:layout_marginHorizontal="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/device_motion"
+        app:layout_constraintTop_toBottomOf="@+id/device_connect"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginTop="16dp"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

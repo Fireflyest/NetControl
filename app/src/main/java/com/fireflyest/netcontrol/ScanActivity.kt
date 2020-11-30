@@ -15,12 +15,16 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.fireflyest.netcontrol.adapter.bluetoothList.BluetoothItemAdapter
+import com.fireflyest.netcontrol.adapter.saveList.SaveItemAdapter
 import com.fireflyest.netcontrol.anim.FallItemAnimator
 import com.fireflyest.netcontrol.bean.Bluetooth
+import com.fireflyest.netcontrol.bean.Device
+import com.fireflyest.netcontrol.data.DataService
 import com.fireflyest.netcontrol.util.StatusBarUtil
 import com.fireflyest.netcontrol.util.ToastUtil
 
@@ -28,13 +32,17 @@ import com.fireflyest.netcontrol.util.ToastUtil
 class ScanActivity : AppCompatActivity() {
 
     private var bluetoothAdapter: BluetoothAdapter? = null
+    private var saveItemAdapter: SaveItemAdapter? = null
 
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
 
     private var backBluetooth: Bluetooth? = null
 
+    private var saves: MutableList<Device>? = ArrayList()
+
     companion object{
         const val START_CONNECTION = 1
+        const val EDIT_SAVE = 2
     }
 
     private val handler =
@@ -44,11 +52,37 @@ class ScanActivity : AppCompatActivity() {
                     backBluetooth = msg.obj as Bluetooth
                     back()
                 }
+                EDIT_SAVE -> {
+                    val device = msg.obj as Device
+                    val intent = Intent(this@ScanActivity, DeviceActivity::class.java)
+                    intent.putExtra("name", device.name)
+                    intent.putExtra("address", device.address)
+                    startActivityForResult(intent, EDIT_SAVE)
+                }
                 else -> {
                 }
             }
             true
         })
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data == null) return
+        when (requestCode) {
+            EDIT_SAVE -> {
+                val name = data.getStringExtra("name")
+                val address = data.getStringExtra("address")
+                address?.let {
+                    if(resultCode == Activity.RESULT_CANCELED){
+
+                    }else{
+                        backBluetooth = Bluetooth(name!!, 0, address, 0, 0)
+                        back()
+                    }
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 
     /**
      * 接收蓝牙广播
@@ -64,11 +98,6 @@ class ScanActivity : AppCompatActivity() {
                         ?: return
                 if (addressList.contains(device.address)) return
                 if (TextUtils.isEmpty(device.name)) return
-//                if (SettingManager.AUTO_DISCERN
-//                    && !device.name.contains("Ai-Thinker")
-//                    && !device.name.contains("MLT-BT05")
-//                    && !device.name.contains("HC-42")
-//                ) return
                 var rssi: Short = -150
                 val bundle = intent.extras
                 if (bundle != null) rssi = bundle.getShort(BluetoothDevice.EXTRA_RSSI)
@@ -101,6 +130,8 @@ class ScanActivity : AppCompatActivity() {
         this.initBluetooth()
 
         this.initView()
+
+        this.initData()
     }
 
     private fun initView(){
@@ -122,6 +153,12 @@ class ScanActivity : AppCompatActivity() {
             itemAnimator = FallItemAnimator()
         }
 
+        saveItemAdapter = SaveItemAdapter(saves, handler)
+        findViewById<RecyclerView>(R.id.scan_save_list).apply {
+            layoutManager = GridLayoutManager(this@ScanActivity, 4)
+            adapter = saveItemAdapter
+        }
+
         this.startScanBluetooth()
     }
 
@@ -137,6 +174,14 @@ class ScanActivity : AppCompatActivity() {
         //注册广播接收
         registerReceiver(receiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
         registerReceiver(receiver, IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED))
+    }
+
+    private fun initData(){
+        Thread(Runnable {
+            DataService.instance.deviceDao.queryAll().forEach {
+                saves!!.add(it)
+            }
+        }).start()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

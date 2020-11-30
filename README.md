@@ -11,19 +11,19 @@ it is:<br>
 * 方便快捷: 将已连接蓝牙储存，不用再次配置。可自行添加快捷指令<br>
 
 ## Layout
-> NetControl
->> MainActivity
->>> 已连接设备列表
->>> 蓝牙控制&指令框
->>> 快捷指令列表
->> DeviceActivity
->>> 蓝牙信息、重命名和删除
->>> 服务与特征
->> LaunchActivity
->>> 初始化数据与配置
->> ScanActivity
->>> 蓝牙扫描与已保存蓝牙查看
->> FirstActivity
->>>首次打开申请权限与教程
+* NetControl
+    * MainActivity
+        * 已连接设备列表
+        * 蓝牙控制&指令框
+        * 快捷指令列表
+    * DeviceActivity
+        * 蓝牙信息、重命名和删除
+        * 服务与特征
+    * LaunchActivity
+        * 初始化数据与配置
+    * ScanActivity
+        * 蓝牙扫描与已保存蓝牙查看
+    * FirstActivity
+        * 首次打开申请权限与教程
 
 ## BLE Control

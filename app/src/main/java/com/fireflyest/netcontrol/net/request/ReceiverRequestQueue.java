@@ -30,12 +30,10 @@ public class ReceiverRequestQueue implements IRequestQueue<OnReceiverCallback> {
     /**
      * 移除一个元素
      *
-     * @param key
      */
-    public boolean removeRequest(String key) {
+    public void removeRequest(String key) {
         Log.d(TAG, "ReceiverRequestQueue before:" + map.size());
         OnReceiverCallback onReceiverCallback = map.remove(key);
         Log.d(TAG, "ReceiverRequestQueue after:" + map.size());
-        return null == onReceiverCallback;
     }
 }

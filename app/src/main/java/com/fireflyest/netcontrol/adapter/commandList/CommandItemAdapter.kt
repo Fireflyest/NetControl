@@ -68,13 +68,13 @@ class CommandItemAdapter (private val commands: MutableList<Command>) :
                             CalendarUtil.convertTime(command.time).substring(6)
                         }
                         time < 259200000 -> {
-                            String.format("%s小时前", CalendarUtil.convertHour(command.time))
+                            String.format("%s小时前", CalendarUtil.convertHour(time))
                         }
                         time < 604800000 -> {
-                            String.format("%s天前", CalendarUtil.convertDay(command.time))
+                            String.format("%s天前", CalendarUtil.convertDay(time))
                         }
                         else -> {
-                            "大于一周前"
+                            "一周之前"
                         }
                     }
                 }

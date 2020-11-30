@@ -14,6 +14,9 @@
     <string name="app_clear">清除</string>
     <string name="app_down">下</string>
 
+    <string name="first_loc">位置信息权限用于使用你的手机发现附件的蓝牙</string>
+    <string name="first_skip">跳过</string>
+
     <string name="menu_device">设备</string>
     <string name="menu_setting">设置</string>
     <string name="menu_batch">批量</string>

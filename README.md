@@ -11,11 +11,18 @@ it is:<br>
 * 方便快捷: 将已连接蓝牙储存，不用再次配置。可自行添加快捷指令<br>
 
 ## Layout
+应用布局主要在三个界面，其中主界面'MainActivity'包括了左侧抽屉布局的设置界面'SettingFragment'。扫描界面'ScanActivity'主要以列表的形式将蓝牙设备展示给用户，其中已保存蓝牙列表可进行编辑跳转。设备界面'DeviceActivity'主要用于设备信息展示。
+<br>
 * NetControl
     * MainActivity
         * 已连接设备列表
         * 蓝牙控制和指令框
         * 快捷指令列表
+        * SettingFragment
+            * 自动连接
+            * 进制转换
+            * 反馈设置
+            * 帮助
     * DeviceActivity
         * 蓝牙信息、重命名和删除
         * 服务与特征

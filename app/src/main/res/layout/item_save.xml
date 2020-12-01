@@ -12,6 +12,7 @@
         android:src="@drawable/ic_bluetooth"
         android:padding="12dp"
         android:background="@drawable/round_primary_light"
+        android:alpha="0.7"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

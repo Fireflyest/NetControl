@@ -250,7 +250,7 @@ class DeviceActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.device_connect).apply {
                 visibility = View.VISIBLE
                 setOnClickListener{
-                    back(Activity.RESULT_OK)
+                    back(Activity.RESULT_FIRST_USER)
                 }
             }
             charss.add(

@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         app:icon="@drawable/ic_setting"
@@ -25,57 +26,26 @@
             app:title="取消回馈"
             app:defaultValue="false" />
 
-<!--        <SwitchPreferenceCompat-->
-<!--            app:dependency="sync"-->
-<!--            app:key="attachment"-->
-<!--            app:summaryOff="@string/attachment_summary_off"-->
-<!--            app:summaryOn="@string/attachment_summary_on"-->
-<!--            app:title="@string/attachment_title" />-->
-
-<!--        <EditTextPreference-->
-<!--            app:key="signature"-->
-<!--            app:title="@string/signature_title"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
-
-<!--        <ListPreference-->
-<!--            app:defaultValue="reply"-->
-<!--            app:entries="@array/reply_entries"-->
-<!--            app:entryValues="@array/reply_values"-->
-<!--            app:key="reply"-->
-<!--            app:title="@string/reply_title"-->
-<!--            app:useSimpleSummaryProvider="true" />-->
-
     </PreferenceCategory>
 
     <PreferenceCategory
         app:icon="@drawable/ic_help"
         app:title="Help">
 
-<!--        <SwitchPreferenceCompat-->
-<!--            app:key="sync"-->
-<!--            app:title="@string/sync_title" />-->
-
-<!--        <SwitchPreferenceCompat-->
-<!--            app:dependency="sync"-->
-<!--            app:key="attachment"-->
-<!--            app:summaryOff="@string/attachment_summary_off"-->
-<!--            app:summaryOn="@string/attachment_summary_on"-->
-<!--            app:title="@string/attachment_title" />-->
-
         <Preference
             app:key="feedback"
             app:title="反馈">
-<!--            <intent-->
-<!--                android:targetPackage="com.fireflyest.btcontrol"-->
-<!--                android:targetClass="com.fireflyest.netcontrol.FeedbackActivity"/>-->
+            <intent
+                android:targetPackage="com.fireflyest.netcontrol"
+                android:targetClass="com.fireflyest.netcontrol.FeedbackActivity"/>
         </Preference>
 
         <Preference
             app:key="version"
             app:title="关于">
-<!--            <intent-->
-<!--                android:targetPackage="com.fireflyest.btcontrol"-->
-<!--                android:targetClass="com.fireflyest.netcontrol.VersionActivity"/>-->
+            <intent
+                android:targetPackage="com.fireflyest.netcontrol"
+                android:targetClass="com.fireflyest.netcontrol.AboutActivity"/>
         </Preference>
 
     </PreferenceCategory>

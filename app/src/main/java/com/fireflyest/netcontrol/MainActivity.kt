@@ -529,6 +529,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        if(drawerLayout!!.isDrawerOpen(GravityCompat.START)){
+            drawerLayout!!.closeDrawers()
+            return
+        }
         if(quickMotion!!.currentState != R.id.quick_scene_start){
             quickMotion!!.transitionToState(R.id.quick_scene_start)
             return

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="?attr/background"
+    tools:context=".AboutActivity">
+
+    <include layout="@layout/toolbar_sub"/>
+
+    <ImageView
+        android:id="@+id/about_logo"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_sub"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/ic_launcher_foreground"
+        android:contentDescription="@string/app_name" />
+
+    <TextView
+        android:id="@+id/about_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:theme="@style/text_bold"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/about_logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="22sp"
+        android:text="@string/app_name"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/about_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:text="@string/app_version"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

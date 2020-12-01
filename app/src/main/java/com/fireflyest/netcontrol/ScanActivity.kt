@@ -34,6 +34,8 @@ class ScanActivity : AppCompatActivity() {
     private var bluetoothAdapter: BluetoothAdapter? = null
     private var saveItemAdapter: SaveItemAdapter? = null
 
+    private var dataService: DataService? = null
+
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
 
     private var backBluetooth: Bluetooth? = null
@@ -72,11 +74,29 @@ class ScanActivity : AppCompatActivity() {
                 val name = data.getStringExtra("name")
                 val address = data.getStringExtra("address")
                 address?.let {
-                    if(resultCode == Activity.RESULT_CANCELED){
-
-                    }else{
-                        backBluetooth = Bluetooth(name!!, 0, address, 0, 0)
-                        back()
+                    when (resultCode) {
+                        Activity.RESULT_CANCELED -> {
+                            saves!!.find { it.address == address }.apply {
+                                Thread(Runnable {
+                                    dataService!!.deviceDao.delete(Device().apply { this.address = address})
+                                }).start()
+                                val index = saves!!.indexOf(this)
+                                saves!!.remove(this)
+                                saveItemAdapter!!.notifyItemRemoved(index)
+                            }
+                        }
+                        Activity.RESULT_FIRST_USER -> {
+                            backBluetooth = Bluetooth(name!!, 0, address, 0, 0)
+                            back()
+                        }
+                        Activity.RESULT_OK -> {
+                            saves!!.find { it.address == address }.apply {
+                                val index = saves!!.indexOf(this)
+                                this!!.name = name
+                                saveItemAdapter!!.notifyItemChanged(index)
+                            }
+                        }
+                        else -> {}
                     }
                 }
             }
@@ -177,8 +197,9 @@ class ScanActivity : AppCompatActivity() {
     }
 
     private fun initData(){
+        dataService = DataService.instance
         Thread(Runnable {
-            DataService.instance.deviceDao.queryAll().forEach {
+            dataService!!.deviceDao.queryAll().forEach {
                 saves!!.add(it)
             }
         }).start()

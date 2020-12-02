@@ -90,12 +90,23 @@
                     android:id="@+id/main_select_clear"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toStartOf="@+id/main_select_edit"
+                    app:layout_constraintEnd_toStartOf="@+id/main_select_read"
                     app:layout_constraintTop_toTopOf="@+id/select_name"
                     app:layout_constraintBottom_toBottomOf="@+id/select_address"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/app_clear"
                     android:src="@drawable/ic_clear"/>
+
+                <ImageButton
+                    android:id="@+id/main_select_read"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toStartOf="@+id/main_select_edit"
+                    app:layout_constraintTop_toTopOf="@+id/select_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/select_address"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_read"
+                    android:src="@drawable/ic_read"/>
 
                 <ImageButton
                     android:id="@+id/main_select_edit"

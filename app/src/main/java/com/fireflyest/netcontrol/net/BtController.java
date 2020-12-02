@@ -19,7 +19,7 @@ public interface BtController {
 
     void setStateCallback(ConnectStateCallback connectStateCallback);
 
-    void writeBuffer(String address, byte[] buf, OnWriteCallback writeCallback);
+    void writeBuffer(String address, String str, OnWriteCallback writeCallback);
 
     void closeConnect(String address);
 
@@ -34,6 +34,8 @@ public interface BtController {
     void setEnableNotify(boolean enable);
 
     void setCharacteristic(String address, String service, String characteristic);
+
+    void readCharacteristic(String address);
 
     void setEnableHex(boolean enable);
 

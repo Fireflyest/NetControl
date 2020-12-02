@@ -13,6 +13,7 @@
     <string name="app_cancel">取消</string>
     <string name="app_clear">清除</string>
     <string name="app_down">下</string>
+    <string name="app_read">读取</string>
 
     <string name="first_loc">位置信息权限用于使用你的手机发现附件的蓝牙</string>
     <string name="first_skip">跳过</string>

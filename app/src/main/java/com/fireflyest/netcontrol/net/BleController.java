@@ -10,6 +10,7 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.nfc.FormatException;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -97,7 +98,7 @@ public class BleController implements BtController {
     }
 
     @Override
-    public void writeBuffer(String address, byte[] buf, OnWriteCallback writeCallback) {
+    public void writeBuffer(String address, String str, OnWriteCallback writeCallback) {
         this.writeCallback = writeCallback;
 
         if (!bluetoothAdapter.isEnabled()) {
@@ -114,11 +115,17 @@ public class BleController implements BtController {
         }
 
         if(enableHex){
-            characteristic.setValue(bytesToHexString(buf));
-            Log.e(LOG_TAG, "发送数据 -> " +bytesToHexString(buf));
+            int number = 0;
+            try{
+                number = Integer.parseInt(str);
+            }catch (NumberFormatException e){
+                Log.e(LOG_TAG, "转换十六进制失败 -> " + str);
+            }
+            characteristic.setValue(Integer.toHexString(number));
+            Log.e(LOG_TAG, "发送数据 -> " + Integer.toHexString(number));
         }else {
-            characteristic.setValue(buf);
-            Log.e(LOG_TAG, "发送数据 -> " +Arrays.toString(buf));
+            characteristic.setValue(str);
+            Log.e(LOG_TAG, "发送数据 -> " + str);
         }
 
         BluetoothGatt gatt = gattMap.get(address);
@@ -206,30 +213,30 @@ public class BleController implements BtController {
     }
 
     @Override
+    public void readCharacteristic(String address){
+        BluetoothGatt gatt = gattMap.get(address);
+        if (gatt == null) {
+            Log.e(LOG_TAG, "蓝牙未连接 -> " + address);
+            return;
+        }
+
+        BluetoothGattCharacteristic gattCharacteristic = characteristicMap.get(address);
+        if (gattCharacteristic == null) {
+            Log.e(LOG_TAG, "蓝牙未配置 -> " + address);
+            return;
+        }
+
+        gatt.readCharacteristic(gattCharacteristic);
+
+    }
+
+    @Override
     public void setEnableHex(boolean enable) {
         this.enableHex = enable;
     }
 
 
     /*##################################################################################3*/
-
-    /**
-     * 将byte数组转为16进制字符串 此方法主要目的为方便Log的显示
-     */
-    public String bytesToHexString(byte[] src) {
-        StringBuilder result = new StringBuilder();
-        for (byte b : src) {
-
-            String hexString = Integer.toHexString(b & 0xFF);
-            if (hexString.length() == 1) {
-                hexString = '0' + hexString;
-            }
-
-            result.append(hexString.toUpperCase());
-        }
-        return result.toString();
-    }
-
 
     /**
      * 蓝牙GATT连接及操作事件回调
@@ -267,20 +274,6 @@ public class BleController implements BtController {
                                 gatt.writeDescriptor(clientConfig);
                             }
                         }
-//                        if((characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0){
-//                            final OnReceiverCallback callback = receiverRequestQueue.get("mainActivity");
-//                            if(callback == null)return;
-//                            final String data = characteristic.getFloatValue()
-//                            System.out.println("out -> " + data);
-//                            if(data != null){
-//                                runOnMainThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        callback.onReceive(data.getBytes());
-//                                    }
-//                                });
-//                            }
-//                        }
                     }
                 }
             }
@@ -309,6 +302,21 @@ public class BleController implements BtController {
         //描述符被读了
         @Override
         public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+        }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            Log.e(LOG_TAG, "读取数据: "+ Arrays.toString(characteristic.getValue()));
+            final OnReceiverCallback callback = receiverRequestQueue.get("mainActivity");
+            if(callback == null)return;
+            final byte[] data = characteristic.getValue();
+            if(data == null)return;
+            runOnMainThread(new Runnable() {
+                @Override
+                public void run() {
+                    callback.onReceive(data);
+                }
+            });
         }
 
         //发送数据结果

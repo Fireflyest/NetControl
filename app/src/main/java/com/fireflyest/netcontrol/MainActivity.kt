@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
     private var selectClose: ImageButton? = null
     private var selectEdit: ImageButton? = null
     private var selectClear: ImageButton? = null
+    private var selectRead: ImageButton? = null
     private var commandMore: ImageButton? = null
     private var commandEdit: EditText? = null
     private var commandSend: TextView? = null
@@ -129,8 +130,11 @@ class MainActivity : AppCompatActivity() {
                     connectedItemAdapter!!.notifyItemChanged(msg.obj as Int)
                 }
                 ADD_COMMAND ->{
-                    commandItemAdapter!!.addItem(msg.obj as Command)
-                    commandList!!.smoothScrollToPosition(commands.size)
+                    val command = msg.obj as Command
+                    if(!commands.contains(command)){
+                        commandItemAdapter!!.addItem(command)
+                        commandList!!.smoothScrollToPosition(commands.size)
+                    }
                 }
                 REFRESH_COMMAND ->{
                     commandItemAdapter!!.notifyDataSetChanged()
@@ -384,6 +388,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        selectRead = findViewById<ImageButton>(R.id.main_select_read).apply {
+            setOnClickListener {
+                AnimateUtil.click(it, 100)
+                btController!!.readCharacteristic(connectedAddress)
+            }
+        }
+
         commandMore = findViewById<ImageButton>(R.id.command_more).apply {
             setOnClickListener {
                 AnimateUtil.click(it, 100)
@@ -485,9 +496,8 @@ class MainActivity : AppCompatActivity() {
      * @param command 指令
      */
     private fun sendCommand(command: String) {
-        val bytes = command.toByteArray()
         commandEdit!!.setText("")
-        btController!!.writeBuffer(connectedAddress, bytes, object : OnWriteCallback {
+        btController!!.writeBuffer(connectedAddress, command, object : OnWriteCallback {
             override fun onSuccess() {
                 addData(command, "Send", true)
             }
@@ -514,12 +524,12 @@ class MainActivity : AppCompatActivity() {
             if (CalendarUtil.getDate() - lastTime > 180000L) {
                 val time = Command(text = "#", type = "System", time = CalendarUtil.getDate(), isSuccess = true, address = connectedAddress)
                 dataService!!.commandDao.insertAll(time)
-                handler.obtainMessage(ADD_COMMAND, time).sendToTarget()
+                this@MainActivity.handler.obtainMessage(ADD_COMMAND, time).sendToTarget()
             }
             lastTime = CalendarUtil.getDate()
             val data = Command(text = command, type = type, time = CalendarUtil.getDate(), isSuccess = success, address = connectedAddress)
             dataService!!.commandDao.insertAll(data)
-            handler.obtainMessage(ADD_COMMAND, data).sendToTarget()
+            this@MainActivity.handler.obtainMessage(ADD_COMMAND, data).sendToTarget()
         }).start()
     }
 

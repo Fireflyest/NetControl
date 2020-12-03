@@ -14,6 +14,7 @@
     <string name="app_clear">清除</string>
     <string name="app_down">下</string>
     <string name="app_read">读取</string>
+    <string name="app_pin">固定</string>
 
     <string name="first_loc">位置信息权限用于使用你的手机发现附件的蓝牙</string>
     <string name="first_skip">跳过</string>
@@ -23,6 +24,12 @@
     <string name="menu_batch">批量</string>
     <string name="menu_all">全选</string>
     <string name="menu_invert">反选</string>
+    <string name="menu_server">服务器</string>
+    <string name="menu_help">帮助</string>
+    <string name="menu_feedback">帮助与反馈</string>
+    <string name="menu_share">分享</string>
+    <string name="menu_about">关于</string>
+    <string name="menu_night">夜间</string>
 
     <string name="scan_scanning">扫描中</string>
     <string name="scan_result">扫描结果</string>
@@ -31,6 +38,7 @@
 
     <string name="command_send">发送</string>
     <string name="command_hint">点击输入指令</string>
+    <string name="command_hex">0x</string>
 
     <string name="device_time">创建于: </string>
 

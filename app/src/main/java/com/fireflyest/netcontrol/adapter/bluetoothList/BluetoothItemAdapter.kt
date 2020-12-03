@@ -59,7 +59,7 @@ class BluetoothItemAdapter(
             Major.TOY -> holder.type!!.setImageResource(R.drawable.ic_toy)
             Major.AUDIO_VIDEO -> holder.type!!.setImageResource(R.drawable.ic_audio)
             Major.PERIPHERAL -> holder.type!!.setImageResource(R.drawable.ic_peripheral)
-            0x1F00 -> if (bluetooth.name.contains("Mi Smart Band")) {
+            0x1F00 -> if (bluetooth.name.contains("Band")) {
                 holder.type!!.setImageResource(R.drawable.ic_wearable)
             } else {
                 holder.type!!.setImageResource(R.drawable.ic_bluetooth)

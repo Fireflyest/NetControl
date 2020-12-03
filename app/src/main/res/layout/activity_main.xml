@@ -155,7 +155,7 @@
 
             <View
                 android:id="@+id/quick_shade"
-                android:layout_width="match_parent"
+                android:layout_width="600dp"
                 android:layout_height="wrap_content"
                 android:alpha="0.0"
                 android:background="@drawable/background_shade"
@@ -180,6 +180,17 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
+                    android:id="@+id/quick_pin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_pin"
+                    android:src="@drawable/ic_pin"
+                    app:layout_constraintBottom_toBottomOf="@+id/quick_text"
+                    app:layout_constraintEnd_toStartOf="@+id/quick_add"
+                    app:layout_constraintTop_toTopOf="@+id/quick_text" />
+
+                <ImageButton
                     android:id="@+id/quick_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -195,7 +206,6 @@
                     android:id="@+id/quick_add"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
                     android:background="@android:color/transparent"
                     android:contentDescription="@string/app_add"
                     android:src="@drawable/ic_add"
@@ -225,14 +235,27 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layoutDescription="@xml/command_scene">
 
+            <TextView
+                android:id="@+id/command_hex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/command_hex"
+                android:background="@drawable/round_background"
+                android:layout_marginStart="16dp"
+                android:paddingVertical="3dp"
+                android:paddingHorizontal="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
             <EditText
                 android:id="@+id/command_edit"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/command_hex"
                 app:layout_constraintEnd_toStartOf="@+id/command_more"
-                android:layout_marginStart="22dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:autofillHints=""
                 android:textColor="@color/colorIcon"
@@ -267,13 +290,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/left_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="?attr/customColorValue"
-        app:menu="@menu/menu_left"
-        app:headerLayout="@layout/layout_left_header"/>
+    <include layout="@layout/layout_left_drawer"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

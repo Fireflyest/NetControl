@@ -12,13 +12,6 @@
             app:title="自动连接"
             app:defaultValue="false" />
 
-<!--        app:summaryOff="开启指令十六进制转换"-->
-<!--        app:summaryOn="发送的指令转换为十六进制"-->
-        <SwitchPreferenceCompat
-            app:key="hex_convert"
-            app:title="进制转换"
-            app:defaultValue="false" />
-
 <!--        app:summaryOff="不接收设备返回信息"-->
 <!--        app:summaryOn="发送指令后不会收到反馈"-->
         <SwitchPreferenceCompat

@@ -10,7 +10,6 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
-import android.nfc.FormatException;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -54,8 +53,6 @@ public class BleController implements BtController {
 
     private boolean enableNotify;
 
-    private boolean enableHex;
-
     //默认连接超时时间:6s
     private static final int CONNECTION_TIME_OUT = 6000;
 
@@ -73,7 +70,6 @@ public class BleController implements BtController {
         this.bluetoothAdapter = bluetoothManager.getAdapter();
         this.bleGattCallback = new BleGattCallback();
         this.enableNotify = true;
-        this.enableHex = false;
     }
 
     @Override
@@ -98,7 +94,7 @@ public class BleController implements BtController {
     }
 
     @Override
-    public void writeBuffer(String address, String str, OnWriteCallback writeCallback) {
+    public void writeBuffer(String address, byte[] buffer, OnWriteCallback writeCallback) {
         this.writeCallback = writeCallback;
 
         if (!bluetoothAdapter.isEnabled()) {
@@ -114,19 +110,7 @@ public class BleController implements BtController {
             return;
         }
 
-        if(enableHex){
-            int number = 0;
-            try{
-                number = Integer.parseInt(str);
-            }catch (NumberFormatException e){
-                Log.e(LOG_TAG, "转换十六进制失败 -> " + str);
-            }
-            characteristic.setValue(Integer.toHexString(number));
-            Log.e(LOG_TAG, "发送数据 -> " + Integer.toHexString(number));
-        }else {
-            characteristic.setValue(str);
-            Log.e(LOG_TAG, "发送数据 -> " + str);
-        }
+        characteristic.setValue(buffer);
 
         BluetoothGatt gatt = gattMap.get(address);
         if (gatt != null) {
@@ -229,12 +213,6 @@ public class BleController implements BtController {
         gatt.readCharacteristic(gattCharacteristic);
 
     }
-
-    @Override
-    public void setEnableHex(boolean enable) {
-        this.enableHex = enable;
-    }
-
 
     /*##################################################################################3*/
 

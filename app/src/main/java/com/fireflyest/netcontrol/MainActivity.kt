@@ -7,15 +7,18 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
@@ -43,10 +46,8 @@ import com.fireflyest.netcontrol.net.BtController
 import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.net.callback.ConnectStateCallback
 import com.fireflyest.netcontrol.net.callback.OnWriteCallback
-import com.fireflyest.netcontrol.util.AnimateUtil
-import com.fireflyest.netcontrol.util.CalendarUtil
-import com.fireflyest.netcontrol.util.StatusBarUtil
-import com.fireflyest.netcontrol.util.ToastUtil
+import com.fireflyest.netcontrol.util.*
+import kotlin.collections.ArrayList
 import android.util.Pair as UtilPair
 
 class MainActivity : AppCompatActivity() {
@@ -79,15 +80,19 @@ class MainActivity : AppCompatActivity() {
     private var commandMore: ImageButton? = null
     private var commandEdit: EditText? = null
     private var commandSend: TextView? = null
+    private var commandHex: TextView? = null
     private var commandList: RecyclerView? = null
     private var quickShade: View? = null
     private var quickList: RecyclerView? = null
     private var quickDown: ImageButton? = null
     private var quickAdd: ImageButton? = null
+    private var quickPin: ImageButton? = null
 
 
     private var connectedAddress: String? = null
     private var lastTime: Long = 0
+    private var enableHex: Boolean = false
+    private var enablePin: Boolean = false
 
     companion object{
         const val REQUEST_BLUETOOTH = 1
@@ -102,6 +107,8 @@ class MainActivity : AppCompatActivity() {
         const val REFRESH_COMMAND = 13
         const val SEND_QUICK = 14
         const val DELETE_QUICK = 15
+
+        const val TAG = "MainActivity"
     }
 
     private val handler: Handler = Handler(Handler.Callback { msg ->
@@ -140,7 +147,7 @@ class MainActivity : AppCompatActivity() {
                     commandItemAdapter!!.notifyDataSetChanged()
                 }
                 SEND_QUICK ->{
-                    quickMotion!!.transitionToState(R.id.quick_scene_start)
+                    if(!enablePin) quickMotion!!.transitionToState(R.id.quick_scene_start)
                     (msg.obj as Quick).command?.let { this.sendCommand(it) }
                 }
                 DELETE_QUICK ->{
@@ -237,7 +244,7 @@ class MainActivity : AppCompatActivity() {
                                 "",
                                 uuid[0],
                                 uuid[1],
-                                false,
+                                true,
                                 CalendarUtil.getDate()
                             )
                             dataService!!.deviceDao.insert(device)
@@ -266,7 +273,11 @@ class MainActivity : AppCompatActivity() {
         })
         btController?.registerReceiveListener("mainActivity"
         ) { value ->
-            var string = String(value!!)
+            var string = if(enableHex){
+                ScaleUtil.bytesToHexString(value)
+            }else{
+                String(value)
+            }
             if(string.endsWith("\r\n"))string = string.trimEnd('\r', '\n')
             addData(string, "Receive", true)
         }
@@ -289,7 +300,21 @@ class MainActivity : AppCompatActivity() {
         }).start()
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        btController!!.setEnableHex(sharedPreferences!!.getBoolean("hex_convert", false))
+        enableHex = sharedPreferences!!.getBoolean("hex_convert", false)
+        if(enableHex){
+            commandHex!!.setBackgroundResource(R.drawable.round_primary)
+            commandHex!!.setTextColor(Color.parseColor("#FAF3F9"))
+        }else{
+            commandHex!!.setBackgroundResource(R.drawable.round_background)
+            commandHex!!.setTextColor(Color.parseColor("#E1E3E6"))
+        }
+        enablePin = sharedPreferences!!.getBoolean("quick_pin", false)
+        if(enablePin){
+            quickPin!!.alpha = 1F
+        }else{
+            quickPin!!.alpha = 0.3F
+        }
+
         btController!!.setEnableNotify(!sharedPreferences!!.getBoolean("cancel_notify", false))
 
         listener = SharedPreferences.OnSharedPreferenceChangeListener{ sharedPreferences, key ->
@@ -299,7 +324,10 @@ class MainActivity : AppCompatActivity() {
 
                 }
                 "hex_convert" ->{
-                    btController?.setEnableHex(enable)
+                    ToastUtil.showShort(this, "转换十六进制: ${if(enable) "开启" else "关闭"}")
+                }
+                "quick_pin" ->{
+                    ToastUtil.showShort(this, "窗口固定: ${if(enable) "开启" else "关闭"}")
                 }
                 "cancel_notify" ->{
                     btController?.setEnableNotify(!enable)
@@ -341,6 +369,21 @@ class MainActivity : AppCompatActivity() {
             setOnClickListener {
                 val sendText: String = commandEdit!!.text.toString().trim()
                 sendCommand(sendText)
+            }
+        }
+
+        commandHex = findViewById<TextView>(R.id.command_hex).apply {
+            setOnClickListener {
+                AnimateUtil.click(it, 100)
+                if(enableHex){
+                    it.setBackgroundResource(R.drawable.round_background)
+                    (it as TextView).setTextColor(Color.parseColor("#E1E3E6"))
+                }else{
+                    it.setBackgroundResource(R.drawable.round_primary)
+                    (it as TextView).setTextColor(Color.parseColor("#FAF3F9"))
+                }
+                enableHex = !enableHex
+                sharedPreferences!!.edit().putBoolean("hex_convert", enableHex).apply()
             }
         }
 
@@ -470,6 +513,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        quickPin = findViewById<ImageButton>(R.id.quick_pin).apply {
+            setOnClickListener{
+                AnimateUtil.click(it, 100)
+                if(enablePin){
+                    it.alpha = 0.3F
+                }else{
+                    it.alpha = 1F
+                }
+                enablePin = !enablePin
+                sharedPreferences!!.edit().putBoolean("quick_pin", enablePin).apply()
+            }
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -497,7 +553,16 @@ class MainActivity : AppCompatActivity() {
      */
     private fun sendCommand(command: String) {
         commandEdit!!.setText("")
-        btController!!.writeBuffer(connectedAddress, command, object : OnWriteCallback {
+        Log.e(TAG, "发送指令 -> $command")
+        Log.e(TAG, "指令字节 -> ${command.toByteArray().contentToString()}")
+        var data = command.toByteArray()
+        if(enableHex){
+            data = ScaleUtil.getHexBytes(command)
+            Log.e(TAG, "指令转换进制")
+        }
+        Log.e(TAG, "数据字节 -> ${data.contentToString()}")
+
+        btController!!.writeBuffer(connectedAddress, data, object : OnWriteCallback {
             override fun onSuccess() {
                 addData(command, "Send", true)
             }
@@ -508,6 +573,9 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
+    /*##################################################################################3*/
+
 
     /**
      * 添加指令数据

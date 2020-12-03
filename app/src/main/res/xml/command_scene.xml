@@ -25,10 +25,10 @@
             <Layout
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="22dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 motion:layout_constraintBottom_toBottomOf="parent"
-                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintStart_toEndOf="@+id/command_hex"
                 motion:layout_constraintEnd_toStartOf="@+id/command_send"/>
         </Constraint>
     </ConstraintSet>
@@ -56,10 +56,10 @@
             <Layout
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="22dp"
+                android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 motion:layout_constraintBottom_toBottomOf="parent"
-                motion:layout_constraintStart_toStartOf="parent"
+                motion:layout_constraintStart_toEndOf="@+id/command_hex"
                 motion:layout_constraintEnd_toStartOf="@+id/command_more"/>
         </Constraint>
     </ConstraintSet>

@@ -14,8 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppLightTheme">
-        <activity android:name=".FeedbackActivity" />
-        <activity android:name=".AboutActivity" />
+        <activity android:name=".SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".FeedbackActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".AboutActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".FirstActivity"
             android:screenOrientation="portrait" />

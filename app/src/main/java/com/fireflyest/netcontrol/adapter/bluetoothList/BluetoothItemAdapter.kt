@@ -1,7 +1,6 @@
 package com.fireflyest.netcontrol.adapter.bluetoothList
 
 import android.bluetooth.BluetoothClass.Device.Major
-import android.content.res.Resources
 import android.os.Handler
 import android.os.Message
 import android.view.LayoutInflater

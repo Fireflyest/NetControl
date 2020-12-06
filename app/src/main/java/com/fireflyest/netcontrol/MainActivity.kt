@@ -18,13 +18,13 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.preference.PreferenceManager
@@ -47,7 +47,6 @@ import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.net.callback.ConnectStateCallback
 import com.fireflyest.netcontrol.net.callback.OnWriteCallback
 import com.fireflyest.netcontrol.util.*
-import kotlin.collections.ArrayList
 import android.util.Pair as UtilPair
 
 class MainActivity : AppCompatActivity() {
@@ -87,12 +86,14 @@ class MainActivity : AppCompatActivity() {
     private var quickDown: ImageButton? = null
     private var quickAdd: ImageButton? = null
     private var quickPin: ImageButton? = null
+    private var leftSetting: ConstraintLayout? = null
 
 
     private var connectedAddress: String? = null
     private var lastTime: Long = 0
     private var enableHex: Boolean = false
     private var enablePin: Boolean = false
+    private var notifyHex: Boolean = false
 
     companion object{
         const val REQUEST_BLUETOOTH = 1
@@ -273,7 +274,7 @@ class MainActivity : AppCompatActivity() {
         })
         btController?.registerReceiveListener("mainActivity"
         ) { value ->
-            var string = if(enableHex){
+            var string = if(notifyHex){
                 ScaleUtil.bytesToHexString(value)
             }else{
                 String(value)
@@ -315,6 +316,8 @@ class MainActivity : AppCompatActivity() {
             quickPin!!.alpha = 0.3F
         }
 
+        notifyHex = sharedPreferences!!.getBoolean("hex_notify", false)
+
         btController!!.setEnableNotify(!sharedPreferences!!.getBoolean("cancel_notify", false))
 
         listener = SharedPreferences.OnSharedPreferenceChangeListener{ sharedPreferences, key ->
@@ -331,6 +334,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 "cancel_notify" ->{
                     btController?.setEnableNotify(!enable)
+                }
+                "hex_notify" ->{
+                    notifyHex = enable
                 }
                 else ->{
                 }
@@ -526,6 +532,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        leftSetting = findViewById<ConstraintLayout>(R.id.left_setting).apply {
+            setOnClickListener{
+                AnimateUtil.click(it, 100)
+                startActivity(Intent(this@MainActivity, SettingActivity::class.java))
+            }
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -557,8 +570,14 @@ class MainActivity : AppCompatActivity() {
         Log.e(TAG, "指令字节 -> ${command.toByteArray().contentToString()}")
         var data = command.toByteArray()
         if(enableHex){
-            data = ScaleUtil.getHexBytes(command)
-            Log.e(TAG, "指令转换进制")
+            val regex = Regex("^[a-z0-9A-Z]+$")
+            if(command.matches(regex)){
+                data = ScaleUtil.getHexBytes(command)
+                Log.e(TAG, "指令转换进制")
+            }else{
+                ToastUtil.showShort(baseContext, "请注意输入格式")
+                Log.e(TAG, "指令转换进制失败")
+            }
         }
         Log.e(TAG, "数据字节 -> ${data.contentToString()}")
 

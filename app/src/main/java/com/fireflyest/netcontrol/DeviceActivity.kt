@@ -238,7 +238,7 @@ class DeviceActivity : AppCompatActivity() {
                     )
                     val left: String =
                         if(device?.service == service.uuid.toString() && device?.characteristic == characteristic.uuid.toString())
-                            "▣" else "□"
+                            "■" else "□"
                     charss.add(
                         Chars(left, String.format("%s", characteristic.uuid), 1, false, service.uuid.toString())
                     )

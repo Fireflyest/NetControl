@@ -1,29 +1,19 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        app:icon="@drawable/ic_setting"
-        app:title="Setting">
+    <PreferenceCategory>
 
-<!--        app:summaryOff="开启设备自动连接"-->
-<!--        app:summaryOn="应用启用时尝试连接蓝牙"-->
-        <SwitchPreferenceCompat
-            app:key="auto_connect"
-            app:title="自动连接"
-            app:defaultValue="false" />
+        <Preference
+            app:key="mine_devices"
+            app:title="我的设备" />
 
-<!--        app:summaryOff="不接收设备返回信息"-->
-<!--        app:summaryOn="发送指令后不会收到反馈"-->
-        <SwitchPreferenceCompat
-            app:key="cancel_notify"
-            app:title="取消回馈"
-            app:defaultValue="false" />
+        <Preference
+            app:key="ble_server"
+            app:title="服务器" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        app:icon="@drawable/ic_help"
-        app:title="Help">
+    <PreferenceCategory>
 
         <Preference
             app:key="feedback"

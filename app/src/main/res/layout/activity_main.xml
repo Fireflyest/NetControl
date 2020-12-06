@@ -155,7 +155,7 @@
 
             <View
                 android:id="@+id/quick_shade"
-                android:layout_width="600dp"
+                android:layout_width="700dp"
                 android:layout_height="wrap_content"
                 android:alpha="0.0"
                 android:background="@drawable/background_shade"

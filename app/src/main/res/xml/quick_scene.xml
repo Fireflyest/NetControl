@@ -24,7 +24,7 @@
             motion:layout_constraintBottom_toBottomOf="parent"/>
         <Constraint
             android:id="@+id/quick_shade"
-            android:layout_height="600dp"
+            android:layout_height="700dp"
             android:layout_width="match_parent"
             android:alpha="0.8"/>
     </ConstraintSet>

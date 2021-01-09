@@ -25,6 +25,7 @@ import com.fireflyest.netcontrol.anim.FallItemAnimator
 import com.fireflyest.netcontrol.bean.Bluetooth
 import com.fireflyest.netcontrol.bean.Device
 import com.fireflyest.netcontrol.data.DataService
+import com.fireflyest.netcontrol.data.SettingData
 import com.fireflyest.netcontrol.util.StatusBarUtil
 import com.fireflyest.netcontrol.util.ToastUtil
 
@@ -145,6 +146,11 @@ class ScanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(SettingData.instance.themeNight){
+            setTheme(R.style.AppDarkTheme)
+        }else{
+            setTheme(R.style.AppLightTheme)
+        }
         setContentView(R.layout.activity_scan)
 
         this.initBluetooth()

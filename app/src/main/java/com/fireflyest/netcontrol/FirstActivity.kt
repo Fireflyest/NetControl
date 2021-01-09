@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.fireflyest.netcontrol.data.SettingData
 import com.fireflyest.netcontrol.util.StatusBarUtil
 import com.fireflyest.netcontrol.util.ToastUtil.showLong
 
@@ -22,6 +23,11 @@ class FirstActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if(SettingData.instance.themeNight){
+            setTheme(R.style.AppDarkTheme)
+        }else{
+            setTheme(R.style.AppLightTheme)
+        }
         setContentView(R.layout.activity_first)
 
         StatusBarUtil.StatusBarLightMode(this)

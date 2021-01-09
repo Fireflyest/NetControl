@@ -4,13 +4,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
+import com.fireflyest.netcontrol.data.SettingData
 import com.fireflyest.netcontrol.util.StatusBarUtil
 
 class FeedbackActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feedback)
-
+        if(SettingData.instance.themeNight){
+            setTheme(R.style.AppDarkTheme)
+        }else{
+            setTheme(R.style.AppLightTheme)
+        }
         this.initView()
     }
 

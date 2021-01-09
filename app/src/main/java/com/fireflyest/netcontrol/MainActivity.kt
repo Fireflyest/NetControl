@@ -1,6 +1,5 @@
 package com.fireflyest.netcontrol
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.bluetooth.BluetoothAdapter
@@ -42,14 +41,17 @@ import com.fireflyest.netcontrol.bean.Connected
 import com.fireflyest.netcontrol.bean.Device
 import com.fireflyest.netcontrol.bean.Quick
 import com.fireflyest.netcontrol.data.DataService
+import com.fireflyest.netcontrol.data.SettingData
 import com.fireflyest.netcontrol.net.BtController
 import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.net.callback.ConnectStateCallback
 import com.fireflyest.netcontrol.net.callback.OnWriteCallback
 import com.fireflyest.netcontrol.util.*
+import java.util.*
+import kotlin.collections.ArrayList
 import android.util.Pair as UtilPair
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     private var drawerLayout: DrawerLayout? = null
 
@@ -87,13 +89,14 @@ class MainActivity : AppCompatActivity() {
     private var quickAdd: ImageButton? = null
     private var quickPin: ImageButton? = null
     private var leftSetting: ConstraintLayout? = null
+    private var leftNight: ConstraintLayout? = null
 
 
+    private var settingData: SettingData? = null
     private var connectedAddress: String? = null
     private var lastTime: Long = 0
     private var enableHex: Boolean = false
     private var enablePin: Boolean = false
-    private var notifyHex: Boolean = false
 
     companion object{
         const val REQUEST_BLUETOOTH = 1
@@ -165,6 +168,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        settingData = SettingData.instance
+        if(settingData!!.themeNight){
+            setTheme(R.style.AppDarkTheme)
+        }else{
+            setTheme(R.style.AppLightTheme)
+        }
         setContentView(R.layout.activity_main)
 
         //初始化蓝牙控制器
@@ -274,7 +283,7 @@ class MainActivity : AppCompatActivity() {
         })
         btController?.registerReceiveListener("mainActivity"
         ) { value ->
-            var string = if(notifyHex){
+            var string = if(settingData!!.notifyHex){
                 ScaleUtil.bytesToHexString(value)
             }else{
                 String(value)
@@ -316,8 +325,6 @@ class MainActivity : AppCompatActivity() {
             quickPin!!.alpha = 0.3F
         }
 
-        notifyHex = sharedPreferences!!.getBoolean("hex_notify", false)
-
         btController!!.setEnableNotify(!sharedPreferences!!.getBoolean("cancel_notify", false))
 
         listener = SharedPreferences.OnSharedPreferenceChangeListener{ sharedPreferences, key ->
@@ -336,7 +343,7 @@ class MainActivity : AppCompatActivity() {
                     btController?.setEnableNotify(!enable)
                 }
                 "hex_notify" ->{
-                    notifyHex = enable
+                    settingData!!.notifyHex = enable
                 }
                 else ->{
                 }
@@ -347,7 +354,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    @SuppressLint("InflateParams")
     private fun initView(){
         StatusBarUtil.StatusBarLightMode(this)
 
@@ -493,7 +499,7 @@ class MainActivity : AppCompatActivity() {
             setOnClickListener{
                 AnimateUtil.click(it, 100)
                 val quickEditBox = LayoutInflater.from(this@MainActivity)
-                    .inflate(R.layout.dialog_quick_add,null)
+                    .inflate(R.layout.dialog_quick_add, null)
                 AlertDialog.Builder(this@MainActivity).apply {
                     setMessage("请输入指令")
                     setTitle("添加快捷指令")
@@ -539,6 +545,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        leftNight = findViewById<ConstraintLayout>(R.id.left_night).apply {
+            setOnClickListener{
+                AnimateUtil.click(it, 100)
+                settingData!!.themeNight = !settingData!!.themeNight
+                sharedPreferences!!.edit().putBoolean("theme_night", settingData!!.themeNight).apply()
+                recreate()
+            }
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -570,7 +585,7 @@ class MainActivity : AppCompatActivity() {
         Log.e(TAG, "指令字节 -> ${command.toByteArray().contentToString()}")
         var data = command.toByteArray()
         if(enableHex){
-            val regex = Regex("^[a-z0-9A-Z]+$")
+            val regex = Regex("^[a-f0-9A-F]+$")
             if(command.matches(regex)){
                 data = ScaleUtil.getHexBytes(command)
                 Log.e(TAG, "指令转换进制")

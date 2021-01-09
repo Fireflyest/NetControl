@@ -22,6 +22,7 @@ import com.fireflyest.netcontrol.anim.FloatItemAnimator
 import com.fireflyest.netcontrol.bean.Chars
 import com.fireflyest.netcontrol.bean.Device
 import com.fireflyest.netcontrol.data.DataService
+import com.fireflyest.netcontrol.data.SettingData
 import com.fireflyest.netcontrol.net.BtManager
 import com.fireflyest.netcontrol.util.AnimateUtil
 import com.fireflyest.netcontrol.util.CalendarUtil
@@ -92,7 +93,11 @@ class DeviceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        if(SettingData.instance.themeNight){
+            setTheme(R.style.AppDarkTheme)
+        }else{
+            setTheme(R.style.AppLightTheme)
+        }
         setContentView(R.layout.activity_device)
 
         this.initData()

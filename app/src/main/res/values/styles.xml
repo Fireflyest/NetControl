@@ -45,6 +45,7 @@
         <item name="itemTextColor">@color/colorItemTextLight</item>
         <item name="placeholderTextColor">@color/colorTextLight</item>
         <item name="editTextColor">@color/colorTextLight</item>
+        <item name="android:textColor">@color/colorTextLight</item>
 
         <item name="android:statusBarColor">@android:color/transparent</item>
 

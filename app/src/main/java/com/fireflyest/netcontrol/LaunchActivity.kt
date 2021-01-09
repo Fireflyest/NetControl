@@ -1,18 +1,30 @@
 package com.fireflyest.netcontrol
 
-import android.R.attr.key
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
 import com.fireflyest.netcontrol.data.DataService
+import com.fireflyest.netcontrol.data.SettingData
 import com.fireflyest.netcontrol.net.BtManager
 
 
 class LaunchActivity : AppCompatActivity() {
+
+    private var settingData: SettingData? = null
+    private var sharedPreferences: SharedPreferences? =null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.initSetting()
+
+        if(SettingData.instance.themeNight){
+            setTheme(R.style.AppDarkTheme)
+        }else{
+            setTheme(R.style.AppLightTheme)
+        }
         setContentView(R.layout.activity_launch)
 
         DataService.instance.initDataService(this)
@@ -31,5 +43,12 @@ class LaunchActivity : AppCompatActivity() {
         }
 
         finish()
+    }
+
+    private fun initSetting(){
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        settingData = SettingData.instance
+        settingData!!.notifyHex = sharedPreferences!!.getBoolean("hex_notify", false)
+        settingData!!.themeNight = sharedPreferences!!.getBoolean("theme_night", false)
     }
 }

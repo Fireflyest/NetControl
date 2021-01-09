@@ -14,8 +14,8 @@
     <color name="colorYellowDark">#D8D154</color>
     <color name="colorBackground">#F0F1F5</color>
     <color name="colorForeground">#FFFFFF</color>
-    <color name="colorBackgroundDark">#161617</color>
-    <color name="colorForegroundDark">#272727</color>
+    <color name="colorBackgroundDark">#131419</color>
+    <color name="colorForegroundDark">#191B1E</color>
     <color name="colorRipple">#D1D1DA</color>
     <color name="colorRippleDark">#050505</color>
     <color name="colorIcon">#3d4446</color>
@@ -24,4 +24,5 @@
     <color name="colorText">#1A0240</color>
     <color name="colorItemText">#D8D7D7</color>
     <color name="colorItemTextLight">#8F8E8E</color>
+
 </resources>

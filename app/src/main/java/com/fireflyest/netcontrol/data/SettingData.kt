@@ -6,6 +6,8 @@ class SettingData private constructor(){
         val instance = SettingData()
     }
 
+    var notifyHex: Boolean = false
 
+    var themeNight: Boolean = false
 
 }

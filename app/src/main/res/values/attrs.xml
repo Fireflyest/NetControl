@@ -9,4 +9,12 @@
         </attr>
         <attr name="strokeWidth" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="ColorfulBar">
+        <attr name="x0" format="dimension" />
+        <attr name="y0" format="dimension" />
+        <attr name="x1" format="dimension" />
+        <attr name="y1" format="dimension" />
+        <attr name="joinWidth" format="dimension" />
+        <attr name="progressColor" format="color" />
+    </declare-styleable>
 </resources>

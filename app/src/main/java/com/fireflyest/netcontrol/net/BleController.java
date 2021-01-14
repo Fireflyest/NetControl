@@ -36,10 +36,10 @@ public class BleController implements BtController {
 
     private BluetoothAdapter bluetoothAdapter;
 
-    private Map<String, BluetoothGattCharacteristic> characteristicMap = new HashMap<>();
-    private Map<String, BluetoothGatt> gattMap = new HashMap<>();
+    private final Map<String, BluetoothGattCharacteristic> characteristicMap = new HashMap<>();
+    private final Map<String, BluetoothGatt> gattMap = new HashMap<>();
 
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     //蓝牙连接回调
     private BleGattCallback bleGattCallback;
@@ -49,18 +49,20 @@ public class BleController implements BtController {
     private OnWriteCallback writeCallback;
 
     //读操作请求队列
-    private ReceiverRequestQueue receiverRequestQueue = new ReceiverRequestQueue();
+    private final ReceiverRequestQueue receiverRequestQueue = new ReceiverRequestQueue();
 
     private boolean enableNotify;
 
     //默认连接超时时间:6s
     private static final int CONNECTION_TIME_OUT = 6000;
 
-    private List<String> disconnectList = new ArrayList<>();
+    private final List<String> disconnectList = new ArrayList<>();
 
-    private static BleController bleController = new BleController();
+    private static final BleController bleController = new BleController();
 
     public static BleController getInstance() {return bleController; }
+
+    public String lastConnect = "";
 
     private BleController(){
     }
@@ -95,7 +97,7 @@ public class BleController implements BtController {
 
     @Override
     public void writeBuffer(String address, byte[] buffer, OnWriteCallback writeCallback) {
-        this.writeCallback = writeCallback;
+        if(writeCallback != null) this.writeCallback = writeCallback;
 
         if (!bluetoothAdapter.isEnabled()) {
             writeCallback.onFailed(OnWriteCallback.FAILED_BLUETOOTH_DISABLE);
@@ -105,7 +107,7 @@ public class BleController implements BtController {
 
         BluetoothGattCharacteristic characteristic = characteristicMap.get(address);
         if (characteristic == null) {
-            writeCallback.onFailed(OnWriteCallback.FAILED_INVALID_CHARACTER);
+            if(writeCallback != null) writeCallback.onFailed(OnWriteCallback.FAILED_INVALID_CHARACTER);
             Log.e(LOG_TAG, "FAILED_INVALID_CHARACTER");
             return;
         }
@@ -115,7 +117,7 @@ public class BleController implements BtController {
         BluetoothGatt gatt = gattMap.get(address);
         if (gatt != null) {
             boolean success = gatt.writeCharacteristic(characteristic);
-            if(!success) writeCallback.onFailed(OnWriteCallback.FAILED_OPERATION);
+            if(!success && writeCallback != null) writeCallback.onFailed(OnWriteCallback.FAILED_OPERATION);
             Log.e(LOG_TAG, "发送结果 -> " + (success ? "成功":"失败"));
         }
 
@@ -226,9 +228,11 @@ public class BleController implements BtController {
             String address = gatt.getDevice().getAddress();
             if (newState == BluetoothProfile.STATE_CONNECTED) { //连接成功
                 gatt.discoverServices();
+                lastConnect = address;
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {   //断开连接
                 connectStateCallback.connectLost(address);
                 characteristicMap.remove(address);
+                lastConnect = "";
                 if (!disconnectList.contains(address)) {
                     reConnect();
                 }

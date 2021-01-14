@@ -12,8 +12,13 @@ import com.fireflyest.netcontrol.bean.Quick
 import com.fireflyest.netcontrol.data.DataService
 
 
-class QuickItemAdapter(private var quicks: MutableList<Quick>, private var handler: Handler) :
+class QuickItemAdapter(private var quicks: MutableList<Quick>, private var callBack: ItemClickedCallBack) :
     RecyclerView.Adapter<QuickItemAdapter.ViewHolder>() {
+
+    interface ItemClickedCallBack{
+        fun onLongClicked(quick: Quick)
+        fun onClicked(quick: Quick)
+    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var text: TextView = view.findViewById(R.id.item_quick_text)
@@ -35,10 +40,10 @@ class QuickItemAdapter(private var quicks: MutableList<Quick>, private var handl
         val quick: Quick = quicks[position]
         holder.text.text = quick.command
         holder.itemView.setOnClickListener{
-            handler.obtainMessage(MainActivity.SEND_QUICK, quick).sendToTarget()
+            callBack.onClicked(quick)
         }
         holder.itemView.setOnLongClickListener{
-            handler.obtainMessage(MainActivity.DELETE_QUICK, quick).sendToTarget()
+            callBack.onLongClicked(quick)
             Thread(Runnable {
                 DataService.instance.quickDao.delete(quick)
             }).start()

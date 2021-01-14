@@ -5,12 +5,26 @@
 
         <Preference
             app:key="mine_devices"
-            app:title="我的设备" />
+            app:title="我的设备" >
+            <intent
+                android:targetPackage="com.fireflyest.netcontrol"
+                android:targetClass="com.fireflyest.netcontrol.AboutActivity"/>
+        </Preference>
+
+        <Preference
+            app:key="quick_command"
+            app:title="快捷指令" >
+            <intent
+                android:targetPackage="com.fireflyest.netcontrol"
+                android:targetClass="com.fireflyest.netcontrol.QuickActivity"/>
+        </Preference>
 
         <Preference
             app:key="ble_server"
             app:title="服务器" />
-
+<!--        <intent-->
+<!--            android:targetPackage="com.fireflyest.netcontrol"-->
+<!--            android:targetClass="com.fireflyest.netcontrol.ServerActivity"/>-->
     </PreferenceCategory>
 
     <PreferenceCategory>

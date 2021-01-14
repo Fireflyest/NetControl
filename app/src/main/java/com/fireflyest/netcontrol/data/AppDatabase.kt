@@ -12,7 +12,7 @@ import com.fireflyest.netcontrol.dao.QuickDao
 
 @Database(
     entities = [Command::class, Device::class, Quick::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

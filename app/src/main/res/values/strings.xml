@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">NetControl</string>
+    <string name="app_name">蓝牙遥控</string>
     <string name="app_version">Version 1.0.0</string>
     <string name="app_empty"> </string>
+    <string name="app_zero">0</string>
     <string name="app_add">添加</string>
     <string name="app_close">关闭</string>
     <string name="app_edit">修改</string>
@@ -15,6 +16,8 @@
     <string name="app_down">下</string>
     <string name="app_read">读取</string>
     <string name="app_pin">固定</string>
+    <string name="app_type">类型</string>
+    <string name="app_color">颜色(RGB)</string>
 
     <string name="first_loc">位置信息权限用于使用你的手机发现附件的蓝牙</string>
     <string name="first_skip">跳过</string>
@@ -39,6 +42,7 @@
     <string name="command_send">发送</string>
     <string name="command_hint">点击输入指令</string>
     <string name="command_hex">0x</string>
+    <string name="command_text">指令</string>
 
     <string name="device_time">创建于: </string>
 

@@ -47,6 +47,9 @@ class SheetFragment : BottomSheetDialogFragment()
     private var firstText: TextView? = null
     private var secondText: TextView? = null
 
+    private var lastFirst: Int = 0
+    private var lastSecond: Int = 0
+
     private var delay: Int = 0
 
 
@@ -123,16 +126,17 @@ class SheetFragment : BottomSheetDialogFragment()
 
         gridLayout = view.findViewById(R.id.quick_button_grid)
         for(num :Int in 0 until gridLayout!!.childCount){
-            getChild(num).apply {
-                setOnClickListener {
-                    AnimateUtil.click(this, 100)
-                    Thread(Runnable {
-                        val quick = dataService!!.quickDao.loadByNum(num)
-                        quick.command?.let { it1 -> sendCommand(it1) }
-                    }).start()
-                }
-                Thread(Runnable {
-                    val quick = dataService!!.quickDao.loadByNum(num)
+            Thread(Runnable {
+                 val quick = dataService!!.quickDao.loadByNum(num)
+
+                getChild(num).apply {
+                    setOnClickListener {child ->
+                        AnimateUtil.click(child, 100)
+                        Thread(Runnable {
+                            quick.command?.let { it1 -> sendCommand(it1) }
+                        }).start()
+                    }
+
                     setType(quick.type)
                     setColor(Color.parseColor("#" +
                             intToHex(quick.colorR) +
@@ -141,14 +145,16 @@ class SheetFragment : BottomSheetDialogFragment()
                     ))
                     text = quick.display
                     command = quick.command
-                }).start()
-            }
+
+                }
+            }).start()
+
         }
 
         Thread(Runnable {
             while (true){
                 if(delay > 0)delay --
-                sleep(300)
+                sleep(500)
             }
         }).start()
 
@@ -196,18 +202,24 @@ class SheetFragment : BottomSheetDialogFragment()
 
         val btController = BtManager.getBtController()
 
-        btController!!.writeBuffer(BleController.getInstance().lastConnect, data, null)
+        btController?.writeBuffer(BleController.getInstance().lastConnect, data, null)
     }
 
     override fun onProgressChange(progress: Int) {
         val level = (progress/10)
-        firstText!!.text = "$level"
-        sendCommand("${300+level}")
+        if(lastFirst != level){
+            firstText!!.text = "$level"
+            sendCommand("${300+level}")
+            lastFirst = level
+        }
     }
 
     override fun onBarProgressChange(progress: Int) {
         secondText!!.text = "$progress"
-        sendCommand("$progress")
+        if(lastSecond != progress){
+            sendCommand("$progress")
+            lastSecond = progress
+        }
     }
 
 }

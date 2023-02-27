@@ -1,6 +1,7 @@
 package com.fireflyest.netcontrol
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.EditText
@@ -8,6 +9,7 @@ import android.widget.GridLayout
 import android.widget.NumberPicker
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.fireflyest.netcontrol.data.DataService
@@ -115,9 +117,15 @@ class QuickActivity : AppCompatActivity() , OnSeekBarChangeListener {
                 commandEdit!!.setText(quick.command)
                 displayEdit!!.setText(quick.display)
                 typePicker!!.value = quick.type
-                colorRBar!!.progress = quick.colorR
-                colorGBar!!.progress = quick.colorG
-                colorBBar!!.progress = quick.colorB
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    colorRBar!!.setProgress(quick.colorR, true)
+                    colorGBar!!.setProgress(quick.colorG, true)
+                    colorBBar!!.setProgress(quick.colorB, true)
+                }else{
+                    colorRBar!!.progress = quick.colorR
+                    colorGBar!!.progress = quick.colorG
+                    colorBBar!!.progress = quick.colorB
+                }
             }
         }).start()
     }

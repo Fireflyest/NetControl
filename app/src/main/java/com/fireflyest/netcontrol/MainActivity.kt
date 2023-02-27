@@ -215,7 +215,10 @@ class MainActivity : AppCompatActivity(){
         //初始化蓝牙适配器
         val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         if (!bluetoothAdapter.isEnabled) bluetoothAdapter.enable()
+
+        // 设置btController的状态回调对象
         btController?.setStateCallback(object: ConnectStateCallback {
+            // 连接成功的方法
             override fun connectSucceed(deviceAddress: String){
                 connecteds.find{it.address == deviceAddress}?.apply {
                     this.save = true
@@ -251,7 +254,7 @@ class MainActivity : AppCompatActivity(){
                     }).start()
                 }
             }
-
+            // 连接失败的方法
             override fun connectLost(deviceAddress: String) {
                 connecteds.find { it.address == deviceAddress }?.let {
                     handler.obtainMessage(SEND_TOAST, "连接丢失: ${it.name}").sendToTarget()
@@ -260,6 +263,9 @@ class MainActivity : AppCompatActivity(){
                 }
             }
         })
+
+
+
         btController?.registerReceiveListener("mainActivity"
         ) { value ->
             var string = if(settingData!!.notifyHex){
